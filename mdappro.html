@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD 승인 요청 - 프로모션 최종 검토</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 40px 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            max-width: 1100px;
+            width: 90%;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #0d47a1;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #555;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        /* 요청 메타 정보 박스 */
+        .meta-box {
+            background-color: #f8fbff;
+            border: 1px solid #bbdefb;
+            border-radius: 12px;
+            padding: 20px 30px;
+            margin-bottom: 35px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .meta-label {
+            font-size: 13px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .meta-value {
+            font-size: 15px;
+            color: #0d47a1;
+            font-weight: 700;
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #1565c0;
+            border-bottom: 2px solid #bbdefb;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        /* 비교 테이블 */
+        .comparison-wrapper {
+            margin-bottom: 35px;
+            overflow-x: auto;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #bbdefb;
+        }
+
+        .comparison-table thead th {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 16px 14px;
+            text-align: center;
+            border-bottom: 2px solid #bbdefb;
+        }
+
+        .comparison-table thead th:first-child {
+            text-align: left;
+            background-color: #f8fbff;
+            width: 22%;
+        }
+
+        .comparison-table thead th.recommended-col {
+            background-color: #1976d2;
+            color: #fff;
+            position: relative;
+        }
+
+        .comparison-table thead th.recommended-col::after {
+            content: '✨ AI 추천';
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 4px;
+            opacity: 0.95;
+        }
+
+        .comparison-table tbody td {
+            padding: 14px;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 1px solid #e3f2fd;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .comparison-table tbody td:first-child {
+            text-align: left;
+            font-weight: 500;
+            color: #1565c0;
+            background-color: #f8fbff;
+        }
+
+        .comparison-table tbody td.recommended-col {
+            background-color: #f0f7ff;
+            font-weight: 500;
+        }
+
+        .comparison-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 점수 배지 */
+        .score {
+            display: inline-block;
+            min-width: 38px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .score.high {
+            background-color: #1976d2;
+            color: #fff;
+        }
+
+        .score.mid {
+            background-color: #bbdefb;
+            color: #0d47a1;
+        }
+
+        .score.low {
+            background-color: #eceff1;
+            color: #78909c;
+        }
+
+        /* 리스크 섹션 */
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 35px;
+        }
+
+        .risk-card {
+            background: #fff;
+            border-left: 4px solid #42a5f5;
+            border-radius: 0 8px 8px 0;
+            padding: 18px 20px;
+            box-shadow: 0 2px 6px rgba(21, 101, 192, 0.06);
+        }
+
+        .risk-card.high-risk {
+            border-left-color: #ef5350;
+        }
+
+        .risk-card.mid-risk {
+            border-left-color: #ffa726;
+        }
+
+        .risk-card.low-risk {
+            border-left-color: #42a5f5;
+        }
+
+        .risk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .risk-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0d47a1;
+        }
+
+        .risk-level {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 10px;
+            color: #fff;
+        }
+
+        .risk-level.high { background-color: #ef5350; }
+        .risk-level.mid { background-color: #ffa726; }
+        .risk-level.low { background-color: #42a5f5; }
+
+        .risk-desc {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.5;
+            margin: 0 0 8px 0;
+        }
+
+        .risk-mitigation {
+            font-size: 12px;
+            color: #1565c0;
+            background-color: #f8fbff;
+            padding: 8px 10px;
+            border-radius: 6px;
+            line-height: 1.4;
+        }
+
+        .risk-mitigation strong {
+            color: #0d47a1;
+        }
+
+        /* 종합 의견 */
+        .summary-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #1976d2;
+            border-radius: 0 8px 8px 0;
+            padding: 20px 30px;
+            margin-bottom: 35px;
+        }
+
+        .summary-box h3 {
+            color: #0d47a1;
+            font-size: 16px;
+            margin: 0 0 10px 0;
+        }
+
+        .summary-box p {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        /* 버튼 영역 */
+        .action-area {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-approve {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 17px;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+            font-family: inherit;
+        }
+
+        .btn-approve:hover {
+            background-color: #1565c0;
+        }
+
+        .btn-approve:active {
+            transform: scale(0.98);
+        }
+
+        .btn-cancel {
+            background-color: #fff;
+            color: #1976d2;
+            border: 2px solid #1976d2;
+            padding: 14px 38px;
+            font-size: 17px;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            font-family: inherit;
+        }
+
+        .btn-cancel:hover {
+            background-color: #e3f2fd;
+        }
+
+        .btn-cancel:active {
+            transform: scale(0.98);
+        }
+
+        .icon {
+            display: inline-block;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>MD 승인 요청</h1>
+
+        <!-- 요청 메타 정보 -->
+        <div class="meta-box">
+            <div class="meta-item">
+                <span class="meta-label">요청 ID</span>
+                <span class="meta-value">PRM-2026-0519-001</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">요청자</span>
+                <span class="meta-value">UiPath AI Agent</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">프로모션 기간</span>
+                <span class="meta-value">2026.06.01 ~ 06.30</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">대상 채널</span>
+                <span class="meta-value">웹 + 모바일 앱</span>
+            </div>
+        </div>
+
+        <!-- 평가 항목별 비교 -->
+        <h2 class="section-title">📊 대안 평가 항목별 비교</h2>
+        <div class="comparison-wrapper">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>평가 항목</th>
+                        <th>A안: 스니커 단일 할인</th>
+                        <th class="recommended-col">B안: 크로스셀링 번들</th>
+                        <th>C안: 모자 1+1 & 앱 쿠폰</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>예상 매출 기여도</td>
+                        <td><span class="score mid">+8%</span></td>
+                        <td class="recommended-col"><span class="score high">+12%</span></td>
+                        <td><span class="score low">+5%</span></td>
+                    </tr>
+                    <tr>
+                        <td>예상 마진율</td>
+                        <td><span class="score mid">25%</span></td>
+                        <td class="recommended-col"><span class="score high">28%</span></td>
+                        <td><span class="score low">22%</span></td>
+                    </tr>
+                    <tr>
+                        <td>재고 소진율</td>
+                        <td><span class="score mid">12%</span></td>
+                        <td class="recommended-col"><span class="score high">18%</span></td>
+                        <td><span class="score mid">15%</span></td>
+                    </tr>
+                    <tr>
+                        <td>객단가 상승 효과</td>
+                        <td><span class="score low">낮음</span></td>
+                        <td class="recommended-col"><span class="score high">높음</span></td>
+                        <td><span class="score low">낮음</span></td>
+                    </tr>
+                    <tr>
+                        <td>브랜드 정책 부합성</td>
+                        <td><span class="score mid">보통</span></td>
+                        <td class="recommended-col"><span class="score high">우수</span></td>
+                        <td><span class="score mid">보통</span></td>
+                    </tr>
+                    <tr>
+                        <td>과거 유사 캠페인 ROI</td>
+                        <td><span class="score mid">1.4x</span></td>
+                        <td class="recommended-col"><span class="score high">1.9x</span></td>
+                        <td><span class="score low">1.2x</span></td>
+                    </tr>
+                    <tr>
+                        <td>채널 적합도 (웹/앱)</td>
+                        <td><span class="score mid">보통</span></td>
+                        <td class="recommended-col"><span class="score high">높음</span></td>
+                        <td><span class="score mid">앱 편중</span></td>
+                    </tr>
+                    <tr>
+                        <td>쿠폰 중복 적용 위험</td>
+                        <td><span class="score low">낮음</span></td>
+                        <td class="recommended-col"><span class="score mid">중간</span></td>
+                        <td><span class="score low">높음</span></td>
+                    </tr>
+                    <tr>
+                        <td>AI 종합 점수</td>
+                        <td><span class="score mid">72점</span></td>
+                        <td class="recommended-col"><span class="score high">89점</span></td>
+                        <td><span class="score low">64점</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 리스크 요약 -->
+        <h2 class="section-title">⚠️ 리스크 요약</h2>
+        <div class="risk-grid">
+            <div class="risk-card mid-risk">
+                <div class="risk-header">
+                    <span class="risk-title">쿠폰 중복 적용</span>
+                    <span class="risk-level mid">중간</span>
+                </div>
+                <p class="risk-desc">기존 신규가입 5% 쿠폰과 번들 할인 15%가 중복 적용될 가능성이 있어 마진 침식 우려가 있습니다.</p>
+                <div class="risk-mitigation">
+                    <strong>완화안:</strong> 프로모션 기간 중 번들 상품에 한해 타 쿠폰 사용 불가 정책 적용
+                </div>
+            </div>
+
+            <div class="risk-card mid-risk">
+                <div class="risk-header">
+                    <span class="risk-title">후디 재고 부족 가능성</span>
+                    <span class="risk-level mid">중간</span>
+                </div>
+                <p class="risk-desc">현재 후디 재고 8,400장 기준, 예상 판매량 7,200장으로 인기 사이즈/컬러는 조기 품절 가능성이 있습니다.</p>
+                <div class="risk-mitigation">
+                    <strong>완화안:</strong> 사이즈별 재고 모니터링 및 품절 시 자동 대체 상품 추천 노출
+                </div>
+            </div>
+
+            <div class="risk-card low-risk">
+                <div class="risk-header">
+                    <span class="risk-title">물류 리드타임</span>
+                    <span class="risk-level low">낮음</span>
+                </div>
+                <p class="risk-desc">번들 패키징을 위한 추가 작업 시간이 필요하나, 현재 물류센터 가용 캐파 내에서 처리 가능한 수준입니다.</p>
+                <div class="risk-mitigation">
+                    <strong>완화안:</strong> 프로모션 시작 D-3일 사전 패키징 작업 일정 사전 확보
+                </div>
+            </div>
+
+            <div class="risk-card low-risk">
+                <div class="risk-header">
+                    <span class="risk-title">경쟁사 동시 프로모션</span>
+                    <span class="risk-level low">낮음</span>
+                </div>
+                <p class="risk-desc">동기간 경쟁사 1곳에서 유사 카테고리 할인 진행 예정이나 할인율과 번들 구성이 차별화되어 영향 제한적입니다.</p>
+                <div class="risk-mitigation">
+                    <strong>완화안:</strong> 캠페인 시작 후 24시간 단위로 경쟁사 동향 모니터링
+                </div>
+            </div>
+
+            <div class="risk-card high-risk">
+                <div class="risk-header">
+                    <span class="risk-title">반품률 상승 가능성</span>
+                    <span class="risk-level high">높음</span>
+                </div>
+                <p class="risk-desc">번들 할인 특성상 단품 대비 반품률이 평균 1.8배 높은 패턴이 과거 데이터에서 관측되었습니다.</p>
+                <div class="risk-mitigation">
+                    <strong>완화안:</strong> 번들 구성 상품의 사이즈 가이드 강화 및 반품 정책 명확화 안내
+                </div>
+            </div>
+
+            <div class="risk-card low-risk">
+                <div class="risk-header">
+                    <span class="risk-title">브랜드 정책</span>
+                    <span class="risk-level low">낮음</span>
+                </div>
+                <p class="risk-desc">본사 가이드라인상 15% 번들 할인은 허용 범위 내이며, 사전 협의 없이 진행 가능한 수준입니다.</p>
+                <div class="risk-mitigation">
+                    <strong>완화안:</strong> 별도 조치 불필요, 본사 정기 리포트에 결과 공유
+                </div>
+            </div>
+        </div>
+
+        <!-- 종합 의견 -->
+        <div class="summary-box">
+            <h3>🤖 AI 에이전트 종합 의견</h3>
+            <p>3가지 대안 중 <strong>B안(크로스셀링 번들)</strong>이 8개 평가 항목 종합 점수에서 89점으로 가장 높으며, 특히 객단가 상승과 후디 과잉 재고 소진 측면에서 우수한 성과가 기대됩니다. 식별된 6개 리스크 중 5개는 낮음~중간 수준으로 운영적 완화안이 마련되어 있으며, 반품률 상승(높음)에 대해서는 사이즈 가이드 강화로 통제 가능한 범위입니다. <strong>최종 승인을 권고드립니다.</strong></p>
+        </div>
+
+        <!-- 액션 버튼 -->
+        <div class="action-area">
+            <button class="btn-approve" onclick="approve()">
+                <span class="icon">✅</span>승인
+            </button>
+            <button class="btn-cancel" onclick="cancel()">
+                <span class="icon">✖</span>취소
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function approve() {
+            alert("프로모션이 승인되었습니다.\n\n• 요청 ID: PRM-2026-0502-017\n• UiPath Maestro에서 후속 실행 프로세스가 자동 트리거됩니다.\n• 채널별 캠페인 등록, 재고 잠금, 알림 발송이 순차 진행됩니다.");
+        }
+
+        function cancel() {
+            if (confirm("승인 요청을 취소하시겠습니까?\n수정 사항이 있다면 이전 화면에서 '내용 수정'을 이용해주세요.")) {
+                alert("승인 요청이 취소되었습니다.");
+            }
+        }
+    </script>
+
+</body>
+</html>

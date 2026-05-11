@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post-Campaign Analytics - 프로모션 성과 분석</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 40px 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            /* 티얼/시안 계열 - 데이터 분석/리포팅 느낌 */
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            color: #006064;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.97);
+            max-width: 1180px;
+            width: 92%;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 96, 100, 0.12);
+        }
+
+        /* 헤더 */
+        .system-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #80deea;
+            margin-bottom: 25px;
+        }
+
+        .system-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .system-logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #00acc1, #00838f);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 131, 143, 0.3);
+        }
+
+        .system-info h1 {
+            margin: 0;
+            color: #006064;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .system-info p {
+            margin: 2px 0 0 0;
+            color: #00838f;
+            font-size: 13px;
+        }
+
+        .session-tag {
+            background-color: #e0f7fa;
+            border: 1px solid #4dd0e1;
+            color: #006064;
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-weight: 500;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* 캠페인 메타 */
+        .campaign-meta {
+            background: linear-gradient(135deg, #00acc1 0%, #00838f 100%);
+            color: #fff;
+            border-radius: 12px;
+            padding: 18px 24px;
+            margin-bottom: 28px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .campaign-meta .item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .campaign-meta .label {
+            font-size: 11px;
+            opacity: 0.85;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .campaign-meta .value {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .campaign-meta .value.mono {
+            font-family: 'Courier New', monospace;
+            font-size: 17px;
+        }
+
+        /* KPI 메인 4종 */
+        .kpi-main {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .kpi-card {
+            background: #fff;
+            border: 1px solid #80deea;
+            border-radius: 12px;
+            padding: 18px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00acc1, #00838f);
+        }
+
+        .kpi-card.positive::before { background: linear-gradient(90deg, #43a047, #2e7d32); }
+        .kpi-card.negative::before { background: linear-gradient(90deg, #e53935, #c62828); }
+        .kpi-card.neutral::before { background: linear-gradient(90deg, #fb8c00, #ef6c00); }
+
+        .kpi-label {
+            font-size: 11px;
+            color: #00838f;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .kpi-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: #006064;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 4px;
+        }
+
+        .kpi-delta {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .kpi-delta.up { color: #2e7d32; }
+        .kpi-delta.down { color: #c62828; }
+        .kpi-delta.flat { color: #ef6c00; }
+
+        .kpi-target {
+            font-size: 11px;
+            color: #78909c;
+            margin-top: 2px;
+        }
+
+        /* 섹션 제목 */
+        .section-title {
+            font-size: 16px;
+            color: #006064;
+            font-weight: 700;
+            margin: 24px 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background-color: #00acc1;
+            border-radius: 2px;
+        }
+
+        /* 그리드 - 매출/마진 추이 + 재고 */
+        .row-2col {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .panel {
+            background: #fff;
+            border: 1px solid #80deea;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background-color: #f0fafb;
+            padding: 12px 18px;
+            border-bottom: 1px solid #80deea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #006064;
+        }
+
+        .panel-tag {
+            font-size: 10px;
+            background-color: #00acc1;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .panel-body {
+            padding: 18px 20px;
+        }
+
+        /* 매출 추이 차트 (SVG) */
+        .chart-svg {
+            width: 100%;
+            height: 200px;
+            display: block;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 10px;
+            justify-content: center;
+            font-size: 11px;
+            color: #00838f;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        /* 재고 소진 */
+        .inventory-item {
+            margin-bottom: 14px;
+        }
+
+        .inventory-item:last-child { margin-bottom: 0; }
+
+        .inv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .inv-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #006064;
+        }
+
+        .inv-pct {
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            color: #00838f;
+        }
+
+        .inv-bar {
+            height: 18px;
+            background: #f0fafb;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .inv-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4dd0e1, #00acc1);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            transition: width 1s ease;
+        }
+
+        .inv-target-line {
+            position: absolute;
+            top: -2px;
+            bottom: -2px;
+            width: 2px;
+            background: #ef6c00;
+        }
+
+        .inv-target-label {
+            position: absolute;
+            top: -16px;
+            font-size: 9px;
+            color: #ef6c00;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        .inv-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #78909c;
+            margin-top: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* 채널별 성과 */
+        .channel-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .channel-card {
+            background: #f0fafb;
+            border: 1px solid #b2ebf2;
+            border-radius: 10px;
+            padding: 14px 16px;
+            position: relative;
+        }
+
+        .channel-card.best {
+            background: linear-gradient(135deg, #00acc1, #00838f);
+            color: #fff;
+            border-color: #006064;
+        }
+
+        .channel-card.best::before {
+            content: '🏆 BEST';
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #ffd54f;
+            color: #3e2723;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .channel-name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #006064;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .channel-card.best .channel-name { color: #fff; }
+
+        .channel-metric {
+            margin-bottom: 6px;
+        }
+
+        .channel-metric:last-child { margin-bottom: 0; }
+
+        .channel-metric .m-label {
+            font-size: 10px;
+            color: #00838f;
+            text-transform: uppercase;
+        }
+
+        .channel-card.best .m-label { color: rgba(255,255,255,0.85); }
+
+        .channel-metric .m-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #006064;
+            font-family: 'Courier New', monospace;
+        }
+
+        .channel-card.best .m-value { color: #fff; }
+
+        .channel-metric .m-delta {
+            font-size: 10px;
+            margin-left: 4px;
+            font-weight: 700;
+        }
+
+        .m-delta.up { color: #43a047; }
+        .channel-card.best .m-delta.up { color: #b9f6ca; }
+        .m-delta.down { color: #e53935; }
+        .channel-card.best .m-delta.down { color: #ff8a80; }
+
+        /* 쿠폰 사용률 + 이슈 */
+        .coupon-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        .coupon-table th {
+            background: #f0fafb;
+            padding: 9px 12px;
+            text-align: left;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #00838f;
+            border-bottom: 2px solid #80deea;
+            font-weight: 700;
+        }
+
+        .coupon-table th.num { text-align: right; }
+
+        .coupon-table td {
+            padding: 9px 12px;
+            border-bottom: 1px solid #f0fafb;
+            color: #006064;
+        }
+
+        .coupon-table td.num {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+
+        .coupon-code {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #00838f;
+            background: #e0f7fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+
+        .usage-bar-cell {
+            min-width: 100px;
+        }
+
+        .usage-bar {
+            height: 6px;
+            background: #f0fafb;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 3px;
+        }
+
+        .usage-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4dd0e1, #00acc1);
+            border-radius: 3px;
+        }
+
+        /* 이슈 카드 */
+        .issue-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .issue-item {
+            background: #fff;
+            border-left: 3px solid #4dd0e1;
+            border-radius: 0 6px 6px 0;
+            padding: 10px 14px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .issue-item.critical { border-left-color: #e53935; }
+        .issue-item.warning { border-left-color: #fb8c00; }
+        .issue-item.info { border-left-color: #00acc1; }
+
+        .issue-icon {
+            font-size: 18px;
+        }
+
+        .issue-content .issue-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #006064;
+            margin-bottom: 2px;
+        }
+
+        .issue-content .issue-desc {
+            font-size: 11px;
+            color: #78909c;
+            line-height: 1.4;
+        }
+
+        .issue-count {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+        }
+
+        .issue-count.critical { background: #e53935; }
+        .issue-count.warning { background: #fb8c00; }
+        .issue-count.info { background: #00acc1; }
+
+        /* AI 추천 박스 */
+        .ai-recommend {
+            background: linear-gradient(135deg, #006064 0%, #00363a 100%);
+            color: #fff;
+            border-radius: 14px;
+            padding: 26px 30px;
+            margin-top: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-recommend::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(0, 172, 193, 0.4), transparent);
+            border-radius: 50%;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            position: relative;
+        }
+
+        .ai-header .ai-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #00acc1, #4dd0e1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .ai-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .ai-header .ai-badge {
+            font-size: 10px;
+            background: rgba(255,255,255,0.15);
+            padding: 3px 10px;
+            border-radius: 10px;
+            margin-left: auto;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .ai-badge .dot {
+            width: 6px;
+            height: 6px;
+            background: #69f0ae;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        .ai-summary {
+            font-size: 13px;
+            line-height: 1.7;
+            color: #b2ebf2;
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .ai-summary strong {
+            color: #fff;
+            background: rgba(0, 172, 193, 0.3);
+            padding: 1px 6px;
+            border-radius: 3px;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            position: relative;
+        }
+
+        .insight-card {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            padding: 12px 14px;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .insight-card .insight-icon {
+            font-size: 18px;
+            line-height: 1;
+            margin-top: 1px;
+        }
+
+        .insight-text {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #e0f7fa;
+        }
+
+        .insight-text strong {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .next-action {
+            background: linear-gradient(135deg, rgba(255, 213, 79, 0.15), rgba(255, 167, 38, 0.1));
+            border: 1px solid rgba(255, 213, 79, 0.3);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .next-action .na-icon {
+            font-size: 22px;
+        }
+
+        .next-action .na-content {
+            flex: 1;
+        }
+
+        .next-action .na-title {
+            font-size: 11px;
+            color: #ffd54f;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .next-action .na-desc {
+            font-size: 13px;
+            color: #fff;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .na-tag {
+            font-size: 10px;
+            background: #ffd54f;
+            color: #3e2723;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            white-space: nowrap;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- 헤더 -->
+        <div class="system-header">
+            <div class="system-brand">
+                <div class="system-logo">📊</div>
+                <div class="system-info">
+                    <h1>Post-Campaign Analytics</h1>
+                    <p>프로모션 종료 후 성과 분석 · UiPath Insights v3.2</p>
+                </div>
+            </div>
+            <div class="session-tag">REPORT-2026-0701-B17</div>
+        </div>
+
+        <!-- 캠페인 메타 -->
+        <div class="campaign-meta">
+            <div class="item">
+                <span class="label">캠페인명</span>
+                <span class="value">Sneaker + Hoodie 크로스셀링 번들 (B안)</span>
+            </div>
+            <div class="item">
+                <span class="label">진행 기간</span>
+                <span class="value mono">06.01 ~ 06.30 (30일)</span>
+            </div>
+            <div class="item">
+                <span class="label">캠페인 ID</span>
+                <span class="value mono">PRM-2026-0519-001</span>
+            </div>
+            <div class="item">
+                <span class="label">분석 시점</span>
+                <span class="value mono">2026.07.01 09:00</span>
+            </div>
+        </div>
+
+        <!-- 핵심 KPI -->
+        <div class="kpi-main">
+            <div class="kpi-card positive">
+                <div class="kpi-label">실제 매출</div>
+                <div class="kpi-value">₩6.54억</div>
+                <div class="kpi-delta up">▲ +21.0% <span style="color:#78909c; font-weight:500;">vs 직전 동기</span></div>
+                <div class="kpi-target">예상 ₩6.0억 대비 +9.0%</div>
+            </div>
+            <div class="kpi-card neutral">
+                <div class="kpi-label">매출 Uplift</div>
+                <div class="kpi-value">+13.1%</div>
+                <div class="kpi-delta up">▲ +1.1%p <span style="color:#78909c; font-weight:500;">vs 예측</span></div>
+                <div class="kpi-target">예상 +12.0% / 실측 +13.1%</div>
+            </div>
+            <div class="kpi-card negative">
+                <div class="kpi-label">마진율 실적</div>
+                <div class="kpi-value">26.8%</div>
+                <div class="kpi-delta down">▼ -1.2%p <span style="color:#78909c; font-weight:500;">vs 목표</span></div>
+                <div class="kpi-target">목표 28.0% / 실측 26.8%</div>
+            </div>
+            <div class="kpi-card positive">
+                <div class="kpi-label">재고 소진율</div>
+                <div class="kpi-value">76.2%</div>
+                <div class="kpi-delta up">▲ +5.4%p <span style="color:#78909c; font-weight:500;">vs 평균</span></div>
+                <div class="kpi-target">잠금 3,200 / 판매 2,438 EA</div>
+            </div>
+        </div>
+
+        <!-- 매출/마진 추이 + 재고 소진 -->
+        <div class="row-2col">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">📈 일별 매출 추이 (예상 vs 실적)</div>
+                    <span class="panel-tag">15 DAYS</span>
+                </div>
+                <div class="panel-body">
+                    <svg class="chart-svg" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Grid -->
+                        <line x1="40" y1="20" x2="40" y2="170" stroke="#cfd8dc" stroke-width="1"/>
+                        <line x1="40" y1="170" x2="580" y2="170" stroke="#cfd8dc" stroke-width="1"/>
+
+                        <!-- Y축 라벨 -->
+                        <text x="35" y="25" text-anchor="end" font-size="9" fill="#78909c" font-family="'Courier New', monospace">8천만</text>
+                        <text x="35" y="65" text-anchor="end" font-size="9" fill="#78909c" font-family="'Courier New', monospace">6천만</text>
+                        <text x="35" y="105" text-anchor="end" font-size="9" fill="#78909c" font-family="'Courier New', monospace">4천만</text>
+                        <text x="35" y="145" text-anchor="end" font-size="9" fill="#78909c" font-family="'Courier New', monospace">2천만</text>
+                        <text x="35" y="173" text-anchor="end" font-size="9" fill="#78909c" font-family="'Courier New', monospace">0</text>
+
+                        <!-- Grid lines -->
+                        <line x1="40" y1="65" x2="580" y2="65" stroke="#eceff1" stroke-width="1" stroke-dasharray="2,3"/>
+                        <line x1="40" y1="105" x2="580" y2="105" stroke="#eceff1" stroke-width="1" stroke-dasharray="2,3"/>
+                        <line x1="40" y1="145" x2="580" y2="145" stroke="#eceff1" stroke-width="1" stroke-dasharray="2,3"/>
+
+                        <!-- 예상 매출 (점선) -->
+                        <polyline points="60,135 96,128 132,124 168,118 204,114 240,108 276,102 312,96 348,92 384,88 420,80 456,72 492,68 528,62 564,56"
+                                  fill="none" stroke="#90a4ae" stroke-width="2" stroke-dasharray="4,3"/>
+
+                        <!-- 실적 매출 영역 -->
+                        <path d="M 60,140 L 96,130 L 132,118 L 168,110 L 204,100 L 240,88 L 276,78 L 312,68 L 348,58 L 384,52 L 420,48 L 456,42 L 492,36 L 528,32 L 564,28 L 564,170 L 60,170 Z"
+                              fill="url(#area-grad)" opacity="0.3"/>
+
+                        <defs>
+                            <linearGradient id="area-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#00acc1"/>
+                                <stop offset="100%" stop-color="#00acc1" stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- 실적 매출 라인 -->
+                        <polyline points="60,140 96,130 132,118 168,110 204,100 240,88 276,78 312,68 348,58 384,52 420,48 456,42 492,36 528,32 564,28"
+                                  fill="none" stroke="#00838f" stroke-width="2.5" stroke-linejoin="round"/>
+
+                        <!-- 데이터 포인트 (실적) -->
+                        <g fill="#00838f">
+                            <circle cx="60" cy="140" r="3"/>
+                            <circle cx="240" cy="88" r="3"/>
+                            <circle cx="420" cy="48" r="3"/>
+                            <circle cx="564" cy="28" r="4" fill="#fff" stroke="#00838f" stroke-width="2.5"/>
+                        </g>
+
+                        <!-- 피크 라벨 -->
+                        <g transform="translate(564, 28)">
+                            <rect x="-58" y="-25" width="56" height="18" rx="3" fill="#006064"/>
+                            <text x="-30" y="-12" text-anchor="middle" font-size="10" fill="#fff" font-weight="700" font-family="'Courier New', monospace">₩7.4천만</text>
+                        </g>
+
+                        <!-- X축 라벨 -->
+                        <text x="60" y="187" text-anchor="middle" font-size="9" fill="#78909c">D-1</text>
+                        <text x="240" y="187" text-anchor="middle" font-size="9" fill="#78909c">D-5</text>
+                        <text x="420" y="187" text-anchor="middle" font-size="9" fill="#78909c">D-10</text>
+                        <text x="564" y="187" text-anchor="middle" font-size="9" fill="#78909c">D-15</text>
+                    </svg>
+                    <div class="chart-legend">
+                        <span class="legend-item"><span class="legend-dot" style="background:#00838f;"></span> 실적 매출</span>
+                        <span class="legend-item"><span class="legend-dot" style="background:#90a4ae;"></span> 예상 매출</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">📦 재고 소진 (계획 vs 실적)</div>
+                    <span class="panel-tag">SKU 6</span>
+                </div>
+                <div class="panel-body">
+                    <div class="inventory-item">
+                        <div class="inv-header">
+                            <span class="inv-name">👟 Sneaker (3 SKU)</span>
+                            <span class="inv-pct">87%</span>
+                        </div>
+                        <div class="inv-bar" style="margin-top:18px;">
+                            <div class="inv-fill" style="width: 87%;">1,098 / 1,260</div>
+                            <div class="inv-target-line" style="left: 75%;">
+                                <span class="inv-target-label">계획 75%</span>
+                            </div>
+                        </div>
+                        <div class="inv-meta">
+                            <span>잠금 1,260 EA</span>
+                            <span style="color:#2e7d32;">+12%p 초과 달성</span>
+                        </div>
+                    </div>
+
+                    <div class="inventory-item" style="margin-top: 22px;">
+                        <div class="inv-header">
+                            <span class="inv-name">👕 Hoodie (3 SKU)</span>
+                            <span class="inv-pct">69%</span>
+                        </div>
+                        <div class="inv-bar" style="margin-top:18px;">
+                            <div class="inv-fill" style="width: 69%; background: linear-gradient(90deg, #ffb74d, #fb8c00);">1,340 / 1,940</div>
+                            <div class="inv-target-line" style="left: 75%;">
+                                <span class="inv-target-label">계획 75%</span>
+                            </div>
+                        </div>
+                        <div class="inv-meta">
+                            <span>잠금 1,940 EA</span>
+                            <span style="color:#ef6c00;">-6%p 미달 (과잉 소진 X)</span>
+                        </div>
+                    </div>
+
+                    <div class="inventory-item" style="margin-top: 22px;">
+                        <div class="inv-header">
+                            <span class="inv-name">전체 합산</span>
+                            <span class="inv-pct">76.2%</span>
+                        </div>
+                        <div class="inv-bar" style="margin-top:18px;">
+                            <div class="inv-fill" style="width: 76%;">2,438 / 3,200</div>
+                            <div class="inv-target-line" style="left: 75%;">
+                                <span class="inv-target-label">계획 75%</span>
+                            </div>
+                        </div>
+                        <div class="inv-meta">
+                            <span>총 잠금 3,200 EA</span>
+                            <span style="color:#2e7d32;">+1.2%p 달성</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 채널별 성과 -->
+        <h3 class="section-title">🌐 채널별 성과</h3>
+        <div class="channel-grid">
+            <div class="channel-card">
+                <div class="channel-name">💻 Web Store</div>
+                <div class="channel-metric">
+                    <div class="m-label">매출 비중</div>
+                    <div class="m-value">42% <span class="m-delta down">▼ -3p</span></div>
+                </div>
+                <div class="channel-metric">
+                    <div class="m-label">전환율</div>
+                    <div class="m-value">3.8%</div>
+                </div>
+            </div>
+
+            <div class="channel-card best">
+                <div class="channel-name">📱 Mobile App</div>
+                <div class="channel-metric">
+                    <div class="m-label">매출 비중</div>
+                    <div class="m-value">41% <span class="m-delta up">▲ +6p</span></div>
+                </div>
+                <div class="channel-metric">
+                    <div class="m-label">전환율</div>
+                    <div class="m-value">5.2% <span class="m-delta up">▲ 1.4p</span></div>
+                </div>
+            </div>
+
+            <div class="channel-card">
+                <div class="channel-name">🏬 오프라인</div>
+                <div class="channel-metric">
+                    <div class="m-label">매출 비중</div>
+                    <div class="m-value">14% <span class="m-delta down">▼ -1p</span></div>
+                </div>
+                <div class="channel-metric">
+                    <div class="m-label">전환율</div>
+                    <div class="m-value">8.1%</div>
+                </div>
+            </div>
+
+            <div class="channel-card">
+                <div class="channel-name">🛒 마켓플레이스</div>
+                <div class="channel-metric">
+                    <div class="m-label">매출 비중</div>
+                    <div class="m-value">3% <span class="m-delta down">▼ -2p</span></div>
+                </div>
+                <div class="channel-metric">
+                    <div class="m-label">전환율</div>
+                    <div class="m-value">2.1%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 쿠폰 사용률 + 이슈 -->
+        <div class="row-2col" style="margin-top: 24px;">
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">🎟️ 쿠폰 사용률</div>
+                    <span class="panel-tag">6 COUPONS</span>
+                </div>
+                <div class="panel-body" style="padding: 0;">
+                    <table class="coupon-table">
+                        <thead>
+                            <tr>
+                                <th>쿠폰 코드</th>
+                                <th class="num">발급</th>
+                                <th class="num">사용</th>
+                                <th>사용률</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="coupon-code">BUNDLE15</span></td>
+                                <td class="num">145,000</td>
+                                <td class="num">29,580</td>
+                                <td class="usage-bar-cell">
+                                    <div style="display:flex; justify-content:space-between; font-size:11px;"><span>20.4%</span></div>
+                                    <div class="usage-bar"><div class="usage-fill" style="width:20.4%;"></div></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="coupon-code">VIP-EXTRA5</span></td>
+                                <td class="num">7,250</td>
+                                <td class="num">2,610</td>
+                                <td class="usage-bar-cell">
+                                    <div style="display:flex; justify-content:space-between; font-size:11px;"><span>36.0%</span></div>
+                                    <div class="usage-bar"><div class="usage-fill" style="width:36%; background:linear-gradient(90deg,#ffd54f,#ffa726);"></div></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="coupon-code">GOLD-EXTRA3</span></td>
+                                <td class="num">26,100</td>
+                                <td class="num">7,830</td>
+                                <td class="usage-bar-cell">
+                                    <div style="display:flex; justify-content:space-between; font-size:11px;"><span>30.0%</span></div>
+                                    <div class="usage-bar"><div class="usage-fill" style="width:30%;"></div></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="coupon-code">SILVER-EXTRA1.5</span></td>
+                                <td class="num">46,400</td>
+                                <td class="num">9,750</td>
+                                <td class="usage-bar-cell">
+                                    <div style="display:flex; justify-content:space-between; font-size:11px;"><span>21.0%</span></div>
+                                    <div class="usage-bar"><div class="usage-fill" style="width:21%;"></div></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="coupon-code">FREE-DELIVERY</span></td>
+                                <td class="num">33,350</td>
+                                <td class="num">14,840</td>
+                                <td class="usage-bar-cell">
+                                    <div style="display:flex; justify-content:space-between; font-size:11px;"><span>44.5%</span></div>
+                                    <div class="usage-bar"><div class="usage-fill" style="width:44.5%; background:linear-gradient(90deg,#69f0ae,#00c853);"></div></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="coupon-code">WELCOME-NEW</span></td>
+                                <td class="num">12,000</td>
+                                <td class="num">1,680</td>
+                                <td class="usage-bar-cell">
+                                    <div style="display:flex; justify-content:space-between; font-size:11px;"><span>14.0%</span></div>
+                                    <div class="usage-bar"><div class="usage-fill" style="width:14%; background:linear-gradient(90deg,#ef9a9a,#e57373);"></div></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="background:#f0fafb; padding:10px 16px; font-size:11px; color:#00838f; border-top:1px solid #80deea; display:flex; justify-content:space-between; font-family:'Courier New', monospace;">
+                        <span>전체 발급 270,100장</span>
+                        <span><strong style="color:#006064;">전체 사용률 24.4%</strong> · 사용 66,290장</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">⚠️ 실패 / 오류 / 테스트 이슈</div>
+                    <span class="panel-tag">11 LOGGED</span>
+                </div>
+                <div class="panel-body">
+                    <div class="issue-list">
+                        <div class="issue-item critical">
+                            <span class="issue-icon">🚨</span>
+                            <div class="issue-content">
+                                <div class="issue-title">결제 실패 (PG 타임아웃)</div>
+                                <div class="issue-desc">D-3 12:14~12:31 KG이니시스 응답 지연으로 28건 결제 실패</div>
+                            </div>
+                            <span class="issue-count critical">28</span>
+                        </div>
+
+                        <div class="issue-item warning">
+                            <span class="issue-icon">⚠️</span>
+                            <div class="issue-content">
+                                <div class="issue-title">모바일 장바구니 이탈</div>
+                                <div class="issue-desc">앱 결제 페이지 로딩 3초+ 시 이탈률 평균 대비 +18% 증가</div>
+                            </div>
+                            <span class="issue-count warning">412</span>
+                        </div>
+
+                        <div class="issue-item warning">
+                            <span class="issue-icon">🔄</span>
+                            <div class="issue-content">
+                                <div class="issue-title">쿠폰 중복 적용 시도</div>
+                                <div class="issue-desc">정책상 단독 사용 쿠폰에 추가 쿠폰 적용 시도 차단됨</div>
+                            </div>
+                            <span class="issue-count warning">147</span>
+                        </div>
+
+                        <div class="issue-item info">
+                            <span class="issue-icon">📦</span>
+                            <div class="issue-content">
+                                <div class="issue-title">사이즈 품절 알림</div>
+                                <div class="issue-desc">Hoodie L 네이비 D-9 조기 품절, 대체 SKU 추천 노출</div>
+                            </div>
+                            <span class="issue-count info">1</span>
+                        </div>
+
+                        <div class="issue-item info">
+                            <span class="issue-icon">🧪</span>
+                            <div class="issue-content">
+                                <div class="issue-title">QA 테스트 케이스</div>
+                                <div class="issue-desc">Pre-launch 7건 + Live monitoring 4건 (모두 PASS)</div>
+                            </div>
+                            <span class="issue-count info">11</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI 추천 인사이트 -->
+        <div class="ai-recommend">
+            <div class="ai-header">
+                <div class="ai-icon">🤖</div>
+                <h3>AI 인사이트 & 다음 프로모션 추천</h3>
+                <div class="ai-badge">
+                    <span class="dot"></span> ANALYSIS COMPLETE
+                </div>
+            </div>
+
+            <div class="ai-summary">
+                추천안 <strong>B(크로스셀링 번들)</strong>은 예상 대비 매출 <strong>+9.0%</strong>로 목표 초과 달성했으나, 마진율이 <strong>-1.2%p (26.8%)</strong>로 목표 미달. <strong>모바일 앱 채널의 전환율(5.2%)이 가장 높았고</strong>, Hoodie 재고는 계획 대비 과잉 소진되지 않아 후속 프로모션 여력이 있습니다.
+            </div>
+
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <span class="insight-icon">💰</span>
+                    <div class="insight-text">
+                        <strong>매출 +9% / 마진 -1.2%p</strong> — 매출 목표는 초과 달성했지만, 쿠폰 중첩 사용 비율이 예상보다 높아 마진이 잠식됨
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <span class="insight-icon">👕</span>
+                    <div class="insight-text">
+                        <strong>Hoodie 과잉 소진 없음</strong> — 잠금 대비 69% 소진(계획 75% 미달), 다음 캠페인에서 추가 활용 가능
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <span class="insight-icon">📱</span>
+                    <div class="insight-text">
+                        <strong>앱 채널 전환율 최고 (5.2%)</strong> — 푸시 알림 기반 즉시 구매 전환이 효과적, 앱 우선 전략 유효
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <span class="insight-icon">📉</span>
+                    <div class="insight-text">
+                        <strong>모바일 장바구니 이탈 높음</strong> — 결제 페이지 로딩 지연(3초+)이 주 원인, 성능 개선 시급
+                    </div>
+                </div>
+            </div>
+
+            <div class="next-action">
+                <span class="na-icon">💡</span>
+                <div class="na-content">
+                    <div class="na-title">다음 프로모션 추천</div>
+                    <div class="na-desc">
+                        Bundle보다 <strong>App-only Coupon</strong>이 더 유리할 것으로 예측됩니다. 앱 전환율(5.2%) × Hoodie 잔여 재고(31%) × 푸시 알림 효과 조합 시 예상 매출 +14%, 마진 28.5% 달성 가능.
+                    </div>
+                </div>
+                <span class="na-tag">AI 신뢰도 87%</span>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP / Inventory - 재고 및 가격 정책 등록</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 40px 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            /* 앰버/오렌지 계열 - ERP 시스템 느낌 */
+            background: linear-gradient(135deg, #fff8e1 0%, #ffe0b2 100%);
+            color: #3e2723;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.97);
+            max-width: 1100px;
+            width: 90%;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(191, 54, 12, 0.12);
+        }
+
+        /* 시스템 헤더 */
+        .system-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ffcc80;
+            margin-bottom: 25px;
+        }
+
+        .system-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .system-logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #fb8c00, #e65100);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(230, 81, 0, 0.3);
+        }
+
+        .system-info h1 {
+            margin: 0;
+            color: #bf360c;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .system-info p {
+            margin: 2px 0 0 0;
+            color: #e65100;
+            font-size: 13px;
+        }
+
+        .session-tag {
+            background-color: #fff3e0;
+            border: 1px solid #ffb74d;
+            color: #e65100;
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-weight: 500;
+        }
+
+        /* 자동화 상태 배너 */
+        .automation-banner {
+            background: linear-gradient(135deg, #fb8c00 0%, #e65100 100%);
+            color: #fff;
+            border-radius: 12px;
+            padding: 20px 28px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.25);
+        }
+
+        .banner-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .banner-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.08); opacity: 0.85; }
+        }
+
+        .banner-text h2 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .banner-text p {
+            margin: 4px 0 0 0;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .banner-right {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .banner-right .label {
+            font-size: 11px;
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+
+        .banner-right .value {
+            font-size: 15px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        /* 진행률 */
+        .progress-section {
+            margin-bottom: 30px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            color: #e65100;
+            font-weight: 700;
+        }
+
+        .progress-percent {
+            font-size: 16px;
+            color: #bf360c;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #fff3e0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffa726, #fb8c00);
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* 단계 인디케이터 */
+        .steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 18px;
+            position: relative;
+        }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background-color: #ffcc80;
+            z-index: 0;
+        }
+
+        .step {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 2px solid #ffcc80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffcc80;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background-color: #fb8c00;
+            border-color: #fb8c00;
+            color: #fff;
+            box-shadow: 0 0 0 4px rgba(251, 140, 0, 0.15);
+        }
+
+        .step.done .step-circle {
+            background-color: #e65100;
+            border-color: #e65100;
+            color: #fff;
+        }
+
+        .step-label {
+            font-size: 11px;
+            color: #795548;
+            margin-top: 6px;
+            text-align: center;
+            max-width: 110px;
+            line-height: 1.3;
+        }
+
+        .step.active .step-label,
+        .step.done .step-label {
+            color: #e65100;
+            font-weight: 700;
+        }
+
+        /* KPI 카드 */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: #fff;
+            border: 1px solid #ffcc80;
+            border-radius: 10px;
+            padding: 14px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .kpi-card .kpi-label {
+            font-size: 11px;
+            color: #795548;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-card .kpi-value {
+            font-size: 22px;
+            color: #bf360c;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .kpi-card .kpi-sub {
+            font-size: 11px;
+            color: #8d6e63;
+        }
+
+        /* 메인 그리드 */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: #fff;
+            border: 1px solid #ffcc80;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background-color: #fff8e1;
+            padding: 14px 20px;
+            border-bottom: 1px solid #ffcc80;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #bf360c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-badge {
+            font-size: 11px;
+            background-color: #fb8c00;
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .panel-badge .dot {
+            width: 6px;
+            height: 6px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: pulse 1.4s infinite;
+        }
+
+        .panel-body {
+            padding: 0;
+        }
+
+        /* SKU 테이블 */
+        .sku-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .sku-table thead th {
+            background-color: #fafafa;
+            color: #5d4037;
+            font-weight: 700;
+            padding: 11px 12px;
+            text-align: left;
+            border-bottom: 2px solid #ffcc80;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sku-table thead th.num {
+            text-align: right;
+        }
+
+        .sku-table tbody td {
+            padding: 11px 12px;
+            border-bottom: 1px solid #fff3e0;
+            color: #3e2723;
+            transition: background-color 0.3s ease;
+        }
+
+        .sku-table tbody td.num {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+
+        .sku-row {
+            opacity: 0.45;
+            transition: all 0.3s ease;
+        }
+
+        .sku-row.processing {
+            opacity: 1;
+            background-color: #fff8e1;
+        }
+
+        .sku-row.processing td {
+            background-color: #fff8e1;
+        }
+
+        .sku-row.done {
+            opacity: 1;
+        }
+
+        .sku-code {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #e65100;
+        }
+
+        .reserved-badge {
+            display: inline-block;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-weight: 700;
+            background-color: #eceff1;
+            color: #90a4ae;
+        }
+
+        .sku-row.processing .reserved-badge {
+            background-color: #fff3e0;
+            color: #fb8c00;
+        }
+
+        .sku-row.done .reserved-badge {
+            background-color: #fb8c00;
+            color: #fff;
+        }
+
+        .price-old {
+            text-decoration: line-through;
+            color: #9e9e9e;
+            font-size: 11px;
+            display: block;
+        }
+
+        .price-new {
+            color: #bf360c;
+            font-weight: 700;
+        }
+
+        .sku-row:not(.done) .price-new,
+        .sku-row:not(.done) .price-old {
+            color: inherit;
+            font-weight: inherit;
+            text-decoration: none;
+        }
+
+        .sku-row:not(.done) .price-old {
+            display: none;
+        }
+
+        /* 채널 분배 패널 */
+        .channel-distribution {
+            padding: 18px 20px;
+        }
+
+        .channel-item {
+            margin-bottom: 16px;
+            opacity: 0.4;
+            transition: opacity 0.4s ease;
+        }
+
+        .channel-item.active {
+            opacity: 1;
+        }
+
+        .channel-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .channel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .channel-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #5d4037;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .channel-qty {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #bf360c;
+            font-weight: 700;
+        }
+
+        .channel-bar {
+            height: 8px;
+            background-color: #fff3e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .channel-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffa726, #fb8c00);
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .channel-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #8d6e63;
+            margin-top: 4px;
+        }
+
+        /* 정책 적용 카드 */
+        .policy-section {
+            background: #fff;
+            border: 1px solid #ffcc80;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .policy-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+        }
+
+        .policy-item {
+            padding: 18px 20px;
+            border-right: 1px solid #fff3e0;
+            text-align: center;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+        }
+
+        .policy-item:last-child {
+            border-right: none;
+        }
+
+        .policy-item.applied {
+            opacity: 1;
+            background-color: #fff8e1;
+        }
+
+        .policy-icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .policy-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #5d4037;
+            margin-bottom: 4px;
+        }
+
+        .policy-value {
+            font-size: 12px;
+            color: #e65100;
+            font-weight: 500;
+        }
+
+        .policy-status {
+            font-size: 11px;
+            margin-top: 6px;
+            color: #9e9e9e;
+        }
+
+        .policy-item.applied .policy-status {
+            color: #2e7d32;
+            font-weight: 700;
+        }
+
+        /* 액션 영역 */
+        .action-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 24px;
+            border-top: 1px solid #ffcc80;
+        }
+
+        .next-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #e65100;
+            font-size: 14px;
+        }
+
+        .next-info .arrow {
+            font-size: 18px;
+        }
+
+        .next-info strong {
+            color: #bf360c;
+        }
+
+        .btn-next {
+            background-color: #fb8c00;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(251, 140, 0, 0.25);
+            font-family: inherit;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background-color: #e65100;
+        }
+
+        .btn-next:disabled {
+            background-color: #bcaaa4;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .icon {
+            margin-right: 6px;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #795548;
+            margin-bottom: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-subtitle::before {
+            content: '';
+            width: 4px;
+            height: 14px;
+            background-color: #fb8c00;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- 시스템 헤더 -->
+        <div class="system-header">
+            <div class="system-brand">
+                <div class="system-logo">📊</div>
+                <div class="system-info">
+                    <h1>ERP / Inventory Management</h1>
+                    <p>Stock Reservation & Pricing Policy · SAP S/4HANA Connector v2.1</p>
+                </div>
+            </div>
+            <div class="session-tag">Session: ERP-2026051900-9C2A</div>
+        </div>
+
+        <!-- KPI 카드 -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <span class="kpi-label">총 SKU 수</span>
+                <span class="kpi-value" id="kpi-sku">0</span>
+                <span class="kpi-sub">처리 대상</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">잠금 수량</span>
+                <span class="kpi-value" id="kpi-reserved">0</span>
+                <span class="kpi-sub">EA (Soft Reserve)</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">가용 재고율</span>
+                <span class="kpi-value" id="kpi-available">100<span style="font-size:14px;">%</span></span>
+                <span class="kpi-sub">잠금 후 잔여</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">예상 매출액</span>
+                <span class="kpi-value" id="kpi-revenue">₩0</span>
+                <span class="kpi-sub">번들 기준</span>
+            </div>
+        </div>
+
+        <!-- 메인 그리드 -->
+        <div class="main-grid">
+            <!-- SKU 테이블 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">📦 SKU별 재고 잠금 처리</div>
+                    <div class="panel-badge" id="sku-badge">
+                        <span class="dot"></span> PROCESSING
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table class="sku-table">
+                        <thead>
+                            <tr>
+                                <th>SKU 코드</th>
+                                <th>상품명</th>
+                                <th class="num">현재고</th>
+                                <th class="num">잠금</th>
+                                <th class="num">정상가</th>
+                                <th>상태</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sku-tbody">
+                            <!-- JS로 채워짐 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 채널 분배 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">🌐 채널별 재고 분배</div>
+                    <div class="panel-badge" id="channel-badge">
+                        <span class="dot"></span> WAITING
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="channel-distribution">
+                        <div class="channel-item" data-channel="1">
+                            <div class="channel-header">
+                                <span class="channel-name">💻 Web Store</span>
+                                <span class="channel-qty"><span id="ch1-qty">0</span> EA</span>
+                            </div>
+                            <div class="channel-bar">
+                                <div class="channel-fill" id="ch1-fill"></div>
+                            </div>
+                            <div class="channel-meta">
+                                <span>분배율 45%</span>
+                                <span id="ch1-pct">0%</span>
+                            </div>
+                        </div>
+
+                        <div class="channel-item" data-channel="2">
+                            <div class="channel-header">
+                                <span class="channel-name">📱 Mobile App</span>
+                                <span class="channel-qty"><span id="ch2-qty">0</span> EA</span>
+                            </div>
+                            <div class="channel-bar">
+                                <div class="channel-fill" id="ch2-fill"></div>
+                            </div>
+                            <div class="channel-meta">
+                                <span>분배율 35%</span>
+                                <span id="ch2-pct">0%</span>
+                            </div>
+                        </div>
+
+                        <div class="channel-item" data-channel="3">
+                            <div class="channel-header">
+                                <span class="channel-name">🏬 오프라인 매장</span>
+                                <span class="channel-qty"><span id="ch3-qty">0</span> EA</span>
+                            </div>
+                            <div class="channel-bar">
+                                <div class="channel-fill" id="ch3-fill"></div>
+                            </div>
+                            <div class="channel-meta">
+                                <span>분배율 15%</span>
+                                <span id="ch3-pct">0%</span>
+                            </div>
+                        </div>
+
+                        <div class="channel-item" data-channel="4">
+                            <div class="channel-header">
+                                <span class="channel-name">🛒 마켓플레이스</span>
+                                <span class="channel-qty"><span id="ch4-qty">0</span> EA</span>
+                            </div>
+                            <div class="channel-bar">
+                                <div class="channel-fill" id="ch4-fill"></div>
+                            </div>
+                            <div class="channel-meta">
+                                <span>분배율 5%</span>
+                                <span id="ch4-pct">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 가격 정책 적용 -->
+        <div class="section-subtitle">💰 프로모션 가격 정책 적용 현황</div>
+        <div class="policy-section">
+            <div class="policy-grid">
+                <div class="policy-item" data-policy="1">
+                    <div class="policy-icon">🏷️</div>
+                    <div class="policy-title">번들 할인율</div>
+                    <div class="policy-value">15% OFF</div>
+                    <div class="policy-status">대기 중</div>
+                </div>
+                <div class="policy-item" data-policy="2">
+                    <div class="policy-icon">📅</div>
+                    <div class="policy-title">유효 기간</div>
+                    <div class="policy-value">05.10 ~ 05.24</div>
+                    <div class="policy-status">대기 중</div>
+                </div>
+                <div class="policy-item" data-policy="3">
+                    <div class="policy-icon">🔒</div>
+                    <div class="policy-title">중복 쿠폰</div>
+                    <div class="policy-value">사용 불가</div>
+                    <div class="policy-status">대기 중</div>
+                </div>
+                <div class="policy-item" data-policy="4">
+                    <div class="policy-icon">📈</div>
+                    <div class="policy-title">목표 마진</div>
+                    <div class="policy-value">28% 유지</div>
+                    <div class="policy-status">대기 중</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // SKU 데이터
+        const skuData = [
+            { code: 'SNK-2401-BLK', name: 'Sneaker Black 260', stock: 1240, reserve: 480, oldPrice: 129000, newPrice: 109650 },
+            { code: 'SNK-2401-WHT', name: 'Sneaker White 260', stock: 980, reserve: 360, oldPrice: 129000, newPrice: 109650 },
+            { code: 'SNK-2402-BLK', name: 'Sneaker Black 270', stock: 1100, reserve: 420, oldPrice: 129000, newPrice: 109650 },
+            { code: 'HD-3308-NVY', name: 'Hoodie Navy M', stock: 1850, reserve: 720, oldPrice: 79000, newPrice: 67150 },
+            { code: 'HD-3308-GRY', name: 'Hoodie Gray M', stock: 1620, reserve: 640, oldPrice: 79000, newPrice: 67150 },
+            { code: 'HD-3309-NVY', name: 'Hoodie Navy L', stock: 1430, reserve: 580, oldPrice: 79000, newPrice: 67150 }
+        ];
+
+        const totalReserve = skuData.reduce((s, x) => s + x.reserve, 0); // 3200
+        const totalStock = skuData.reduce((s, x) => s + x.stock, 0);
+        const expectedRevenue = totalReserve * 88400 / 2; // bundle 평균가 × 번들 수
+        // 번들 = sneaker + hoodie 페어이므로 잠금량의 절반이 번들 수, 가격 약 17.7만 → 단순화
+
+        // 채널 분배 비율
+        const channels = [
+            { id: 1, ratio: 0.45 },
+            { id: 2, ratio: 0.35 },
+            { id: 3, ratio: 0.15 },
+            { id: 4, ratio: 0.05 }
+        ];
+
+        // SKU 행 렌더링
+        function renderSkuTable() {
+            const tbody = document.getElementById('sku-tbody');
+            skuData.forEach((s, i) => {
+                const tr = document.createElement('tr');
+                tr.className = 'sku-row';
+                tr.dataset.idx = i;
+                tr.innerHTML = `
+                    <td><span class="sku-code">${s.code}</span></td>
+                    <td>${s.name}</td>
+                    <td class="num">${s.stock.toLocaleString()}</td>
+                    <td class="num"><strong>${s.reserve.toLocaleString()}</strong></td>
+                    <td class="num">
+                        <span class="price-old">₩${s.oldPrice.toLocaleString()}</span>
+                        <span class="price-new">₩${s.newPrice.toLocaleString()}</span>
+                    </td>
+                    <td><span class="reserved-badge">대기</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function processSkuRow(idx) {
+            if (idx >= skuData.length) return;
+            const row = document.querySelector(`.sku-row[data-idx="${idx}"]`);
+            const badge = row.querySelector('.reserved-badge');
+
+            row.classList.add('processing');
+            badge.textContent = '잠금 중...';
+
+            setTimeout(() => {
+                row.classList.remove('processing');
+                row.classList.add('done');
+                badge.textContent = '✓ Reserved';
+
+                // KPI 업데이트
+                const processedCount = idx + 1;
+                const reservedSoFar = skuData.slice(0, processedCount).reduce((s, x) => s + x.reserve, 0);
+                document.getElementById('kpi-sku').textContent = processedCount;
+                document.getElementById('kpi-reserved').textContent = reservedSoFar.toLocaleString();
+
+                const availPct = Math.round((1 - reservedSoFar / totalStock) * 100);
+                document.getElementById('kpi-available').innerHTML = availPct + '<span style="font-size:14px;">%</span>';
+
+                // 매출 추정 - 잠금 수량의 절반이 번들 페어, 번들당 약 ₩167,800 (할인 후)
+                const bundles = Math.floor(reservedSoFar / 2);
+                const revenue = bundles * 167800;
+                document.getElementById('kpi-revenue').textContent = '₩' + (revenue / 10000).toFixed(0) + '만';
+
+                // 진행률
+                const progress = (processedCount / skuData.length) * 50; // SKU는 전체의 50% 비중
+                updateProgress(progress);
+
+                // 단계 업데이트
+                if (processedCount === 1) updateStep(2);
+                if (processedCount === skuData.length) {
+                    updateStep(3);
+                    setTimeout(distributeChannels, 600);
+                }
+            }, 700);
+        }
+
+        function distributeChannels() {
+            // SKU 패널 완료 처리
+            const skuBadge = document.getElementById('sku-badge');
+            skuBadge.style.backgroundColor = '#2e7d32';
+            skuBadge.innerHTML = '<span class="dot" style="animation:none;"></span> COMPLETED';
+
+            const chBadge = document.getElementById('channel-badge');
+            chBadge.style.backgroundColor = '#fb8c00';
+            chBadge.innerHTML = '<span class="dot"></span> DISTRIBUTING';
+
+            channels.forEach((c, i) => {
+                setTimeout(() => {
+                    const item = document.querySelector(`.channel-item[data-channel="${c.id}"]`);
+                    item.classList.add('active');
+
+                    const qty = Math.round(totalReserve * c.ratio);
+                    document.getElementById(`ch${c.id}-qty`).textContent = qty.toLocaleString();
+                    document.getElementById(`ch${c.id}-fill`).style.width = (c.ratio * 100) + '%';
+                    document.getElementById(`ch${c.id}-pct`).textContent = Math.round(c.ratio * 100) + '%';
+
+                    updateProgress(50 + (i + 1) / channels.length * 20); // 채널은 20% 비중
+
+                    if (i === channels.length - 1) {
+                        setTimeout(() => {
+                            const chBadge = document.getElementById('channel-badge');
+                            chBadge.style.backgroundColor = '#2e7d32';
+                            chBadge.innerHTML = '<span class="dot" style="animation:none;"></span> COMPLETED';
+                            updateStep(4);
+                            applyPolicies();
+                        }, 600);
+                    }
+                }, i * 700);
+            });
+        }
+
+        function applyPolicies() {
+            const policies = document.querySelectorAll('.policy-item');
+            policies.forEach((p, i) => {
+                setTimeout(() => {
+                    p.classList.add('applied');
+                    p.querySelector('.policy-status').textContent = '✓ 적용 완료';
+                    updateProgress(70 + (i + 1) / policies.length * 25); // 정책은 25%
+
+                    if (i === policies.length - 1) {
+                        setTimeout(() => {
+                            updateStep(5);
+                            setTimeout(finishAutomation, 800);
+                        }, 500);
+                    }
+                }, i * 600);
+            });
+        }
+
+        function updateStep(currentStep) {
+            // 진행률/단계 인디케이터 제거됨 - no-op
+        }
+
+        function updateProgress(percent) {
+            // 진행률 바 제거됨 - no-op
+        }
+
+        function finishAutomation() {
+            // 다음 버튼 활성화
+            const btn = document.getElementById('btn-next');
+            if (btn) {
+                btn.disabled = false;
+                btn.style.animation = 'pulse 1.5s infinite';
+            }
+        }
+
+        function startAutomation() {
+            updateStep(1);
+            renderSkuTable();
+            updateProgress(5);
+
+            setTimeout(() => {
+                let i = 0;
+                const interval = setInterval(() => {
+                    processSkuRow(i);
+                    i++;
+                    if (i >= skuData.length) clearInterval(interval);
+                }, 900);
+            }, 800);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(startAutomation, 500);
+        });
+    </script>
+
+</body>
+</html>

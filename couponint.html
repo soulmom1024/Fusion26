@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon & Membership Management - 쿠폰 발급 및 멤버십 매핑</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 40px 0;
+            font-family: 'Noto Sans KR', sans-serif;
+            /* 퍼플/마젠타 계열 - 마케팅/프로모션 시스템 느낌 */
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            color: #311b92;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.97);
+            max-width: 1100px;
+            width: 90%;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(74, 20, 140, 0.12);
+        }
+
+        /* 시스템 헤더 */
+        .system-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ce93d8;
+            margin-bottom: 25px;
+        }
+
+        .system-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .system-logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #ab47bc, #6a1b9a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(106, 27, 154, 0.3);
+        }
+
+        .system-info h1 {
+            margin: 0;
+            color: #4a148c;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .system-info p {
+            margin: 2px 0 0 0;
+            color: #6a1b9a;
+            font-size: 13px;
+        }
+
+        .session-tag {
+            background-color: #f3e5f5;
+            border: 1px solid #ba68c8;
+            color: #6a1b9a;
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-weight: 500;
+        }
+
+        /* KPI 카드 */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: #fff;
+            border: 1px solid #ce93d8;
+            border-radius: 10px;
+            padding: 14px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .kpi-card .kpi-label {
+            font-size: 11px;
+            color: #6a1b9a;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-card .kpi-value {
+            font-size: 22px;
+            color: #4a148c;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .kpi-card .kpi-sub {
+            font-size: 11px;
+            color: #8e24aa;
+        }
+
+        /* 메인 그리드 */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.3fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: #fff;
+            border: 1px solid #ce93d8;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background-color: #faf4fc;
+            padding: 14px 20px;
+            border-bottom: 1px solid #ce93d8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #4a148c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-badge {
+            font-size: 11px;
+            background-color: #ab47bc;
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .panel-badge .dot {
+            width: 6px;
+            height: 6px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: pulse 1.4s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.08); opacity: 0.85; }
+        }
+
+        .panel-body {
+            padding: 0;
+        }
+
+        /* 쿠폰 발급 테이블 */
+        .coupon-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .coupon-table thead th {
+            background-color: #fafafa;
+            color: #4a148c;
+            font-weight: 700;
+            padding: 11px 12px;
+            text-align: left;
+            border-bottom: 2px solid #ce93d8;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .coupon-table thead th.num {
+            text-align: right;
+        }
+
+        .coupon-table tbody td {
+            padding: 12px;
+            border-bottom: 1px solid #f3e5f5;
+            color: #311b92;
+            transition: background-color 0.3s ease;
+        }
+
+        .coupon-table tbody td.num {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+
+        .coupon-row {
+            opacity: 0.45;
+            transition: all 0.3s ease;
+        }
+
+        .coupon-row.processing {
+            opacity: 1;
+            background-color: #faf4fc;
+        }
+
+        .coupon-row.processing td {
+            background-color: #faf4fc;
+        }
+
+        .coupon-row.done {
+            opacity: 1;
+        }
+
+        .coupon-code {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #6a1b9a;
+            background-color: #f3e5f5;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .tier-badge {
+            display: inline-block;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .tier-vip { background: linear-gradient(135deg, #ffd54f, #ff8f00); color: #3e2723; }
+        .tier-gold { background-color: #ab47bc; }
+        .tier-silver { background-color: #7e57c2; }
+        .tier-bronze { background-color: #9575cd; }
+        .tier-all { background-color: #5e35b1; }
+
+        .coupon-status {
+            display: inline-block;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-weight: 700;
+            background-color: #eceff1;
+            color: #90a4ae;
+        }
+
+        .coupon-row.processing .coupon-status {
+            background-color: #f3e5f5;
+            color: #ab47bc;
+        }
+
+        .coupon-row.done .coupon-status {
+            background-color: #ab47bc;
+            color: #fff;
+        }
+
+        /* 멤버십 등급별 혜택 */
+        .membership-distribution {
+            padding: 18px 20px;
+        }
+
+        .tier-item {
+            margin-bottom: 18px;
+            opacity: 0.4;
+            transition: opacity 0.4s ease;
+        }
+
+        .tier-item.active {
+            opacity: 1;
+        }
+
+        .tier-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .tier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .tier-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #4a148c;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tier-count {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #6a1b9a;
+            font-weight: 700;
+        }
+
+        .tier-bar {
+            height: 8px;
+            background-color: #f3e5f5;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .tier-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .tier-fill.vip { background: linear-gradient(90deg, #ffd54f, #ff8f00); }
+        .tier-fill.gold { background: linear-gradient(90deg, #ce93d8, #ab47bc); }
+        .tier-fill.silver { background: linear-gradient(90deg, #b39ddb, #7e57c2); }
+        .tier-fill.bronze { background: linear-gradient(90deg, #d1c4e9, #9575cd); }
+
+        .tier-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #8e24aa;
+            margin-top: 4px;
+        }
+
+        .tier-benefit {
+            font-size: 11px;
+            color: #6a1b9a;
+            background-color: #faf4fc;
+            padding: 6px 10px;
+            border-radius: 4px;
+            margin-top: 6px;
+            border-left: 3px solid #ab47bc;
+        }
+
+        /* 푸시 알림 큐 */
+        .notification-section {
+            background: #fff;
+            border: 1px solid #ce93d8;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .notification-header {
+            background-color: #faf4fc;
+            padding: 14px 20px;
+            border-bottom: 1px solid #ce93d8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+        }
+
+        .notification-item {
+            padding: 18px 20px;
+            border-right: 1px solid #f3e5f5;
+            text-align: center;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .notification-item:last-child {
+            border-right: none;
+        }
+
+        .notification-item.queued {
+            opacity: 1;
+            background-color: #faf4fc;
+        }
+
+        .notification-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .notification-channel {
+            font-size: 13px;
+            font-weight: 700;
+            color: #4a148c;
+            margin-bottom: 6px;
+        }
+
+        .notification-count {
+            font-size: 18px;
+            color: #6a1b9a;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 4px;
+        }
+
+        .notification-meta {
+            font-size: 11px;
+            color: #8e24aa;
+        }
+
+        .notification-status {
+            font-size: 11px;
+            margin-top: 8px;
+            color: #9e9e9e;
+            font-weight: 700;
+        }
+
+        .notification-item.queued .notification-status {
+            color: #2e7d32;
+        }
+
+        /* 정책 검증 카드 */
+        .policy-section {
+            background: #fff;
+            border: 1px solid #ce93d8;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .policy-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+        }
+
+        .policy-item {
+            padding: 18px 20px;
+            border-right: 1px solid #f3e5f5;
+            text-align: center;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+        }
+
+        .policy-item:last-child {
+            border-right: none;
+        }
+
+        .policy-item.applied {
+            opacity: 1;
+            background-color: #faf4fc;
+        }
+
+        .policy-icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .policy-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #4a148c;
+            margin-bottom: 4px;
+        }
+
+        .policy-value {
+            font-size: 12px;
+            color: #6a1b9a;
+            font-weight: 500;
+        }
+
+        .policy-status {
+            font-size: 11px;
+            margin-top: 6px;
+            color: #9e9e9e;
+        }
+
+        .policy-item.applied .policy-status {
+            color: #2e7d32;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #6a1b9a;
+            margin-bottom: 12px;
+            margin-top: 8px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-subtitle::before {
+            content: '';
+            width: 4px;
+            height: 14px;
+            background-color: #ab47bc;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- 시스템 헤더 -->
+        <div class="system-header">
+            <div class="system-brand">
+                <div class="system-logo">🎟️</div>
+                <div class="system-info">
+                    <h1>Coupon & Membership Management</h1>
+                    <p>Promotion Code Issuance & Tier Benefit Mapping · v4.1.0</p>
+                </div>
+            </div>
+            <div class="session-tag">Session: CMM-2026051900-A4D1</div>
+        </div>
+
+        <!-- KPI 카드 -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <span class="kpi-label">발급 쿠폰 종류</span>
+                <span class="kpi-value" id="kpi-coupon">0</span>
+                <span class="kpi-sub">등급별 + 일반</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">대상 회원 수</span>
+                <span class="kpi-value" id="kpi-members">0</span>
+                <span class="kpi-sub">멤버십 보유</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">푸시 알림 큐</span>
+                <span class="kpi-value" id="kpi-push">0</span>
+                <span class="kpi-sub">발송 예약</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-label">예상 사용률</span>
+                <span class="kpi-value" id="kpi-rate">0<span style="font-size:14px;">%</span></span>
+                <span class="kpi-sub">과거 캠페인 평균</span>
+            </div>
+        </div>
+
+        <!-- 메인 그리드 -->
+        <div class="main-grid">
+            <!-- 쿠폰 발급 테이블 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">🎟️ 쿠폰 발급 처리</div>
+                    <div class="panel-badge" id="coupon-badge">
+                        <span class="dot"></span> ISSUING
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table class="coupon-table">
+                        <thead>
+                            <tr>
+                                <th>쿠폰 코드</th>
+                                <th>대상 등급</th>
+                                <th>혜택</th>
+                                <th class="num">발급 수량</th>
+                                <th>상태</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coupon-tbody">
+                            <!-- JS로 채워짐 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 멤버십 등급별 혜택 매핑 -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">👑 멤버십 등급별 매핑</div>
+                    <div class="panel-badge" id="tier-badge">
+                        <span class="dot"></span> WAITING
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="membership-distribution">
+                        <div class="tier-item" data-tier="1">
+                            <div class="tier-header">
+                                <span class="tier-name">💎 VIP</span>
+                                <span class="tier-count"><span id="t1-count">0</span> 명</span>
+                            </div>
+                            <div class="tier-bar">
+                                <div class="tier-fill vip" id="t1-fill"></div>
+                            </div>
+                            <div class="tier-meta">
+                                <span>전체 5%</span>
+                                <span id="t1-pct">0%</span>
+                            </div>
+                            <div class="tier-benefit">+ 추가 5% 할인 + 무료 배송 + 사은품</div>
+                        </div>
+
+                        <div class="tier-item" data-tier="2">
+                            <div class="tier-header">
+                                <span class="tier-name">🥇 Gold</span>
+                                <span class="tier-count"><span id="t2-count">0</span> 명</span>
+                            </div>
+                            <div class="tier-bar">
+                                <div class="tier-fill gold" id="t2-fill"></div>
+                            </div>
+                            <div class="tier-meta">
+                                <span>전체 18%</span>
+                                <span id="t2-pct">0%</span>
+                            </div>
+                            <div class="tier-benefit">+ 추가 3% 할인 + 무료 배송</div>
+                        </div>
+
+                        <div class="tier-item" data-tier="3">
+                            <div class="tier-header">
+                                <span class="tier-name">🥈 Silver</span>
+                                <span class="tier-count"><span id="t3-count">0</span> 명</span>
+                            </div>
+                            <div class="tier-bar">
+                                <div class="tier-fill silver" id="t3-fill"></div>
+                            </div>
+                            <div class="tier-meta">
+                                <span>전체 32%</span>
+                                <span id="t3-pct">0%</span>
+                            </div>
+                            <div class="tier-benefit">+ 추가 1.5% 할인</div>
+                        </div>
+
+                        <div class="tier-item" data-tier="4">
+                            <div class="tier-header">
+                                <span class="tier-name">🥉 Bronze</span>
+                                <span class="tier-count"><span id="t4-count">0</span> 명</span>
+                            </div>
+                            <div class="tier-bar">
+                                <div class="tier-fill bronze" id="t4-fill"></div>
+                            </div>
+                            <div class="tier-meta">
+                                <span>전체 45%</span>
+                                <span id="t4-pct">0%</span>
+                            </div>
+                            <div class="tier-benefit">기본 번들 할인 15% 적용</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 푸시 알림 큐 -->
+        <div class="section-subtitle">📨 알림 발송 큐 등록 현황</div>
+        <div class="notification-section">
+            <div class="notification-grid">
+                <div class="notification-item" data-noti="1">
+                    <div class="notification-icon">📱</div>
+                    <div class="notification-channel">앱 푸시</div>
+                    <div class="notification-count" id="n1-count">0</div>
+                    <div class="notification-meta">D-1 09:00 발송</div>
+                    <div class="notification-status">대기 중</div>
+                </div>
+                <div class="notification-item" data-noti="2">
+                    <div class="notification-icon">📧</div>
+                    <div class="notification-channel">이메일</div>
+                    <div class="notification-count" id="n2-count">0</div>
+                    <div class="notification-meta">D-3 10:00 발송</div>
+                    <div class="notification-status">대기 중</div>
+                </div>
+                <div class="notification-item" data-noti="3">
+                    <div class="notification-icon">💬</div>
+                    <div class="notification-channel">카카오 알림톡</div>
+                    <div class="notification-count" id="n3-count">0</div>
+                    <div class="notification-meta">D-Day 11:00 발송</div>
+                    <div class="notification-status">대기 중</div>
+                </div>
+                <div class="notification-item" data-noti="4">
+                    <div class="notification-icon">📩</div>
+                    <div class="notification-channel">SMS (VIP)</div>
+                    <div class="notification-count" id="n4-count">0</div>
+                    <div class="notification-meta">D-Day 09:00 발송</div>
+                    <div class="notification-status">대기 중</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 쿠폰 데이터
+        const couponData = [
+            { code: 'BUNDLE15', tier: 'all', tierClass: 'tier-all', benefit: '번들 15% 할인', qty: 145000 },
+            { code: 'VIP-EXTRA5', tier: 'VIP', tierClass: 'tier-vip', benefit: '추가 5% 할인', qty: 7250 },
+            { code: 'GOLD-EXTRA3', tier: 'Gold', tierClass: 'tier-gold', benefit: '추가 3% 할인', qty: 26100 },
+            { code: 'SILVER-EXTRA1.5', tier: 'Silver', tierClass: 'tier-silver', benefit: '추가 1.5% 할인', qty: 46400 },
+            { code: 'FREE-DELIVERY', tier: 'VIP+Gold', tierClass: 'tier-gold', benefit: '무료 배송', qty: 33350 },
+            { code: 'WELCOME-NEW', tier: '신규 가입', tierClass: 'tier-bronze', benefit: '추가 2% 할인', qty: 12000 }
+        ];
+
+        // 멤버십 등급
+        const tiers = [
+            { id: 1, ratio: 0.05, totalMembers: 145000 },
+            { id: 2, ratio: 0.18, totalMembers: 145000 },
+            { id: 3, ratio: 0.32, totalMembers: 145000 },
+            { id: 4, ratio: 0.45, totalMembers: 145000 }
+        ];
+
+        // 푸시 알림 큐
+        const notifications = [
+            { id: 1, count: 98000 },   // App push
+            { id: 2, count: 145000 },  // Email
+            { id: 3, count: 87500 },   // Kakao
+            { id: 4, count: 7250 }     // SMS VIP
+        ];
+
+        const totalCoupons = couponData.reduce((s, c) => s + c.qty, 0);
+        const totalMembers = 145000;
+        const totalPush = notifications.reduce((s, n) => s + n.count, 0);
+
+        // 쿠폰 테이블 렌더링
+        function renderCouponTable() {
+            const tbody = document.getElementById('coupon-tbody');
+            couponData.forEach((c, i) => {
+                const tr = document.createElement('tr');
+                tr.className = 'coupon-row';
+                tr.dataset.idx = i;
+                tr.innerHTML = `
+                    <td><span class="coupon-code">${c.code}</span></td>
+                    <td><span class="tier-badge ${c.tierClass}">${c.tier}</span></td>
+                    <td>${c.benefit}</td>
+                    <td class="num"><strong>${c.qty.toLocaleString()}</strong></td>
+                    <td><span class="coupon-status">대기</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function processCoupon(idx) {
+            if (idx >= couponData.length) return;
+            const row = document.querySelector(`.coupon-row[data-idx="${idx}"]`);
+            const status = row.querySelector('.coupon-status');
+
+            row.classList.add('processing');
+            status.textContent = '발급 중...';
+
+            setTimeout(() => {
+                row.classList.remove('processing');
+                row.classList.add('done');
+                status.textContent = '✓ Issued';
+
+                // KPI 업데이트
+                const processed = idx + 1;
+                document.getElementById('kpi-coupon').textContent = processed;
+
+                if (processed === couponData.length) {
+                    setTimeout(mapMemberships, 500);
+                }
+            }, 700);
+        }
+
+        function mapMemberships() {
+            // 쿠폰 패널 완료
+            const couponBadge = document.getElementById('coupon-badge');
+            couponBadge.style.backgroundColor = '#2e7d32';
+            couponBadge.innerHTML = '<span class="dot" style="animation:none;"></span> COMPLETED';
+
+            const tierBadge = document.getElementById('tier-badge');
+            tierBadge.style.backgroundColor = '#ab47bc';
+            tierBadge.innerHTML = '<span class="dot"></span> MAPPING';
+
+            tiers.forEach((t, i) => {
+                setTimeout(() => {
+                    const item = document.querySelector(`.tier-item[data-tier="${t.id}"]`);
+                    item.classList.add('active');
+
+                    const count = Math.round(t.totalMembers * t.ratio);
+                    document.getElementById(`t${t.id}-count`).textContent = count.toLocaleString();
+                    document.getElementById(`t${t.id}-fill`).style.width = (t.ratio * 100) + '%';
+                    document.getElementById(`t${t.id}-pct`).textContent = Math.round(t.ratio * 100) + '%';
+
+                    // 회원 수 누적
+                    const accumulated = tiers.slice(0, i + 1).reduce((s, x) => s + Math.round(x.totalMembers * x.ratio), 0);
+                    document.getElementById('kpi-members').textContent = accumulated.toLocaleString();
+
+                    if (i === tiers.length - 1) {
+                        setTimeout(() => {
+                            tierBadge.style.backgroundColor = '#2e7d32';
+                            tierBadge.innerHTML = '<span class="dot" style="animation:none;"></span> COMPLETED';
+                            queueNotifications();
+                        }, 500);
+                    }
+                }, i * 700);
+            });
+        }
+
+        function queueNotifications() {
+            const items = document.querySelectorAll('.notification-item');
+            items.forEach((item, i) => {
+                setTimeout(() => {
+                    item.classList.add('queued');
+                    item.querySelector('.notification-status').textContent = '✓ 큐 등록 완료';
+
+                    const count = notifications[i].count;
+                    document.getElementById(`n${notifications[i].id}-count`).textContent = count.toLocaleString();
+
+                    // KPI 누적
+                    const accumulated = notifications.slice(0, i + 1).reduce((s, n) => s + n.count, 0);
+                    document.getElementById('kpi-push').textContent = accumulated.toLocaleString();
+
+                    if (i === items.length - 1) {
+                        setTimeout(animateRate, 500);
+                    }
+                }, i * 600);
+            });
+        }
+
+        function animateRate() {
+            // 예상 사용률 카운트업 (24%)
+            let cur = 0;
+            const target = 24;
+            const interval = setInterval(() => {
+                cur += 1;
+                document.getElementById('kpi-rate').innerHTML = cur + '<span style="font-size:14px;">%</span>';
+                if (cur >= target) clearInterval(interval);
+            }, 40);
+        }
+
+        function startAutomation() {
+            renderCouponTable();
+
+            setTimeout(() => {
+                let i = 0;
+                const interval = setInterval(() => {
+                    processCoupon(i);
+                    i++;
+                    if (i >= couponData.length) clearInterval(interval);
+                }, 900);
+            }, 600);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(startAutomation, 400);
+        });
+    </script>
+
+</body>
+</html>
