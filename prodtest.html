@@ -690,20 +690,20 @@
                         <div class="options-block">
                             <div class="options-label">사이즈 (Sneaker)</div>
                             <div class="options-row">
-                                <button class="option-btn">250</button>
-                                <button class="option-btn active">260</button>
-                                <button class="option-btn">270</button>
-                                <button class="option-btn">280</button>
+                                <button class="option-btn" onclick="selectOption(this)">250</button>
+                                <button class="option-btn active" onclick="selectOption(this)">260</button>
+                                <button class="option-btn" onclick="selectOption(this)">270</button>
+                                <button class="option-btn" onclick="selectOption(this)">280</button>
                             </div>
                         </div>
 
                         <div class="options-block">
                             <div class="options-label">사이즈 (Hoodie)</div>
                             <div class="options-row">
-                                <button class="option-btn">S</button>
-                                <button class="option-btn active">M</button>
-                                <button class="option-btn">L</button>
-                                <button class="option-btn">XL</button>
+                                <button class="option-btn" onclick="selectOption(this)">S</button>
+                                <button class="option-btn active" onclick="selectOption(this)">M</button>
+                                <button class="option-btn" onclick="selectOption(this)">L</button>
+                                <button class="option-btn" onclick="selectOption(this)">XL</button>
                             </div>
                         </div>
 
@@ -807,6 +807,12 @@
         const REGULAR = 208000;
         const BUNDLE = 176800;
         const BUNDLE_DISCOUNT_PCT = 15;
+
+        function selectOption(btn) {
+            const row = btn.closest('.options-row');
+            row.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
 
         // 디바이스 전환
         function setDevice(d) {
