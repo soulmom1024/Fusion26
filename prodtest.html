@@ -622,8 +622,8 @@
 
     <!-- 스테이징 환경 배너 -->
     <div class="staging-banner" id="staging-banner" name="스테이징배너">
-        <span class="left" id="staging-label-left" name="스테이징환경라벨" data-text="STAGING ENVIRONMENT">⚠ STAGING ENVIRONMENT</span>
-        <span id="staging-build-info" name="빌드정보" data-text="build #2026.05.19-rc.7">build #2026.05.19-rc.7 · branch: feature/promo-bundle-15</span>
+        <span class="left" id="staging-label-left" name="스테이징환경라벨" data-text="⚠ STAGING ENVIRONMENT">⚠ STAGING ENVIRONMENT</span>
+        <span id="staging-build-info" name="빌드정보" data-text="build #2026.05.19-rc.7 · branch: feature/promo-bundle-15">build #2026.05.19-rc.7 · branch: feature/promo-bundle-15</span>
         <span class="right" id="staging-label-right" name="QA테스트모드라벨" data-text="QA TEST MODE">QA TEST MODE</span>
     </div>
 
@@ -631,19 +631,19 @@
     <header class="site-header" id="site-header" name="사이트헤더">
         <div class="logo" id="site-logo" name="사이트로고" data-text="SHOPFRONT">SHOP<span class="accent" id="logo-accent" name="로고강조텍스트" data-text="FRONT">FRONT</span></div>
         <div class="header-actions" id="header-actions" name="헤더액션영역">
-            <span class="header-icon" id="btn-search" name="검색버튼" data-text="검색">🔍</span>
-            <span class="header-icon" id="btn-wishlist" name="위시리스트버튼" data-text="위시리스트">♡</span>
-            <span class="header-icon" id="btn-cart-icon" name="장바구니아이콘" data-text="장바구니" onclick="openCart()">
+            <span class="header-icon" id="btn-search" name="검색버튼" data-text="🔍">🔍</span>
+            <span class="header-icon" id="btn-wishlist" name="위시리스트버튼" data-text="♡">♡</span>
+            <span class="header-icon" id="btn-cart-icon" name="장바구니아이콘" data-text="🛒" onclick="openCart()">
                 🛒
-                <span class="cart-badge" id="cart-badge" name="장바구니수량뱃지">0</span>
+                <span class="cart-badge" id="cart-badge" name="장바구니수량뱃지" data-text="0">0</span>
             </span>
         </div>
     </header>
 
     <!-- 디바이스 토글 -->
     <div class="device-toggle" id="device-toggle" name="디바이스전환영역">
-        <button class="device-btn active" id="btn-web" name="웹뷰전환버튼" data-text="Web" onclick="setDevice('web')">💻 Web</button>
-        <button class="device-btn" id="btn-mobile" name="모바일뷰전환버튼" data-text="Mobile" onclick="setDevice('mobile')">📱 Mobile</button>
+        <button class="device-btn active" id="btn-web" name="웹뷰전환버튼" data-text="💻 Web" onclick="setDevice('web')">💻 Web</button>
+        <button class="device-btn" id="btn-mobile" name="모바일뷰전환버튼" data-text="📱 Mobile" onclick="setDevice('mobile')">📱 Mobile</button>
     </div>
 
     <!-- 메인 레이아웃 -->
@@ -656,39 +656,39 @@
 
                     <!-- 갤러리 -->
                     <div class="gallery" id="product-gallery" name="상품갤러리">
-                        <div class="gallery-img" id="gallery-main-image" name="갤러리메인이미지">👟</div>
+                        <div class="gallery-img" id="gallery-main-image" name="갤러리메인이미지" data-text="👟">👟</div>
                         <div class="gallery-thumbs" id="gallery-thumbs" name="갤러리썸네일목록">
-                            <div class="gallery-thumb active" id="thumb-1" name="썸네일1">👟</div>
-                            <div class="gallery-thumb" id="thumb-2" name="썸네일2">📷</div>
-                            <div class="gallery-thumb" id="thumb-3" name="썸네일3">📷</div>
-                            <div class="gallery-thumb" id="thumb-4" name="썸네일4">📷</div>
+                            <div class="gallery-thumb active" id="thumb-1" name="썸네일1" data-text="👟">👟</div>
+                            <div class="gallery-thumb" id="thumb-2" name="썸네일2" data-text="📷">📷</div>
+                            <div class="gallery-thumb" id="thumb-3" name="썸네일3" data-text="📷">📷</div>
+                            <div class="gallery-thumb" id="thumb-4" name="썸네일4" data-text="📷">📷</div>
                         </div>
                     </div>
 
                     <!-- 상품 정보 -->
                     <div class="product-info" id="product-info" name="상품정보영역">
-                        <div class="breadcrumb" id="breadcrumb" name="브레드크럼">Apparel › Footwear › Sneakers</div>
-                        <span class="promo-badge" id="promo-badge" name="프로모션뱃지" data-text="BUNDLE 15% OFF">🛍 BUNDLE 15% OFF</span>
-                        <h1 id="product-title" name="상품명">Sneaker Black 260 + Hoodie Navy M 번들</h1>
-                        <div class="product-meta" id="product-meta" name="상품메타정보">SKU: SNK-2401-BLK + HD-3308-NVY · ID: 4421</div>
+                        <div class="breadcrumb" id="breadcrumb" name="브레드크럼" data-text="Apparel › Footwear › Sneakers">Apparel › Footwear › Sneakers</div>
+                        <span class="promo-badge" id="promo-badge" name="프로모션뱃지" data-text="🛍 BUNDLE 15% OFF">🛍 BUNDLE 15% OFF</span>
+                        <h1 id="product-title" name="상품명" data-text="Sneaker Black 260 + Hoodie Navy M 번들">Sneaker Black 260 + Hoodie Navy M 번들</h1>
+                        <div class="product-meta" id="product-meta" name="상품메타정보" data-text="SKU: SNK-2401-BLK + HD-3308-NVY · ID: 4421">SKU: SNK-2401-BLK + HD-3308-NVY · ID: 4421</div>
 
                         <div class="price-block" id="price-block" name="가격정보영역">
                             <div class="price-row" id="price-row-regular" name="정상가행">
-                                <span id="price-regular-label" name="정상가라벨">정상가</span>
-                                <span class="price-old" id="p-regular" name="정상가금액">₩208,000</span>
+                                <span id="price-regular-label" name="정상가라벨" data-text="정상가">정상가</span>
+                                <span class="price-old" id="p-regular" name="정상가금액" data-text="₩208,000">₩208,000</span>
                             </div>
                             <div class="price-row" id="price-row-discount" name="할인행">
-                                <span id="price-discount-label" name="할인라벨">할인 (-15%)</span>
-                                <span class="price-discount" id="p-discount" name="할인금액">-₩31,200</span>
+                                <span id="price-discount-label" name="할인라벨" data-text="할인 (-15%)">할인 (-15%)</span>
+                                <span class="price-discount" id="p-discount" name="할인금액" data-text="-₩31,200">-₩31,200</span>
                             </div>
                             <div class="price-row" id="price-row-bundle" name="번들가격행" style="margin-top: 8px;">
-                                <span id="price-bundle-label" name="번들가격라벨" style="font-weight: 700; color: #212121;">번들 가격</span>
-                                <span class="price-current" id="p-current" name="번들가격금액">₩176,800</span>
+                                <span id="price-bundle-label" name="번들가격라벨" data-text="번들 가격" style="font-weight: 700; color: #212121;">번들 가격</span>
+                                <span class="price-current" id="p-current" name="번들가격금액" data-text="₩176,800">₩176,800</span>
                             </div>
                         </div>
 
                         <div class="options-block" id="options-sneaker-size" name="스니커즈사이즈옵션">
-                            <div class="options-label" id="options-sneaker-size-label" name="스니커즈사이즈라벨">사이즈 (Sneaker)</div>
+                            <div class="options-label" id="options-sneaker-size-label" name="스니커즈사이즈라벨" data-text="사이즈 (Sneaker)">사이즈 (Sneaker)</div>
                             <div class="options-row" id="options-sneaker-size-row" name="스니커즈사이즈버튼그룹">
                                 <button class="option-btn" id="btn-sneaker-size-250" name="스니커즈사이즈250" data-text="250" onclick="selectOption(this)">250</button>
                                 <button class="option-btn active" id="btn-sneaker-size-260" name="스니커즈사이즈260" data-text="260" onclick="selectOption(this)">260</button>
@@ -698,7 +698,7 @@
                         </div>
 
                         <div class="options-block" id="options-hoodie-size" name="후디사이즈옵션">
-                            <div class="options-label" id="options-hoodie-size-label" name="후디사이즈라벨">사이즈 (Hoodie)</div>
+                            <div class="options-label" id="options-hoodie-size-label" name="후디사이즈라벨" data-text="사이즈 (Hoodie)">사이즈 (Hoodie)</div>
                             <div class="options-row" id="options-hoodie-size-row" name="후디사이즈버튼그룹">
                                 <button class="option-btn" id="btn-hoodie-size-s" name="후디사이즈S" data-text="S" onclick="selectOption(this)">S</button>
                                 <button class="option-btn active" id="btn-hoodie-size-m" name="후디사이즈M" data-text="M" onclick="selectOption(this)">M</button>
@@ -708,9 +708,9 @@
                         </div>
 
                         <div class="qty-row" id="qty-row" name="수량선택영역">
-                            <span id="qty-label" name="수량라벨" style="font-size:13px; color:#555; margin-right:6px;">수량</span>
+                            <span id="qty-label" name="수량라벨" data-text="수량" style="font-size:13px; color:#555; margin-right:6px;">수량</span>
                             <button class="qty-btn" id="btn-qty-decrease" name="수량감소버튼" data-text="−" onclick="changeQty(-1)">−</button>
-                            <span class="qty-display" id="qty-display" name="수량표시">1</span>
+                            <span class="qty-display" id="qty-display" name="수량표시" data-text="1">1</span>
                             <button class="qty-btn" id="btn-qty-increase" name="수량증가버튼" data-text="+" onclick="changeQty(1)">+</button>
                         </div>
 
@@ -730,8 +730,8 @@
     <div class="modal-overlay" id="cart-modal" name="장바구니모달오버레이">
         <div class="modal" id="cart-modal-content" name="장바구니모달">
             <div class="modal-header" id="cart-modal-header" name="장바구니모달헤더">
-                <span class="modal-title" id="cart-modal-title" name="장바구니모달제목" data-text="장바구니">🛒 장바구니</span>
-                <button class="modal-close" id="btn-cart-modal-close" name="장바구니모달닫기버튼" data-text="닫기" onclick="closeModal('cart-modal')">×</button>
+                <span class="modal-title" id="cart-modal-title" name="장바구니모달제목" data-text="🛒 장바구니">🛒 장바구니</span>
+                <button class="modal-close" id="btn-cart-modal-close" name="장바구니모달닫기버튼" data-text="×" onclick="closeModal('cart-modal')">×</button>
             </div>
             <div id="cart-items" name="장바구니상품목록">
                 <div id="cart-empty-message" name="장바구니비어있음메시지" data-text="장바구니가 비어있습니다." style="text-align:center; padding:30px; color:#888; font-size:13px;">
@@ -740,7 +740,7 @@
             </div>
 
             <div class="coupon-section" id="coupon-section" name="쿠폰적용영역" style="display:none;">
-                <div id="coupon-section-label" name="쿠폰적용라벨" data-text="쿠폰 적용" style="font-size:12px; color:#555; margin-bottom:8px; font-weight:500;">🎟 쿠폰 적용</div>
+                <div id="coupon-section-label" name="쿠폰적용라벨" data-text="🎟 쿠폰 적용" style="font-size:12px; color:#555; margin-bottom:8px; font-weight:500;">🎟 쿠폰 적용</div>
                 <div class="coupon-input-row" id="coupon-input-row" name="쿠폰입력행">
                     <input type="text" class="coupon-input" id="coupon-input" name="쿠폰코드입력필드" placeholder="쿠폰 코드 입력">
                     <button class="coupon-apply" id="btn-coupon-apply" name="쿠폰적용버튼" data-text="적용" onclick="applyCoupon()">적용</button>
@@ -756,23 +756,23 @@
             <div class="summary-block" id="summary-block" name="주문요약영역" style="display:none;">
                 <div class="summary-row" id="summary-row-subtotal" name="상품합계행">
                     <span id="summary-subtotal-label" name="상품합계라벨" data-text="상품 합계">상품 합계</span>
-                    <span class="v" id="s-subtotal" name="상품합계금액">₩0</span>
+                    <span class="v" id="s-subtotal" name="상품합계금액" data-text="₩0">₩0</span>
                 </div>
                 <div class="summary-row discount" id="s-bundle-row" name="번들할인행">
                     <span id="summary-bundle-label" name="번들할인라벨" data-text="번들 할인 (15%)">번들 할인 (15%)</span>
-                    <span class="v" id="s-bundle" name="번들할인금액">-₩0</span>
+                    <span class="v" id="s-bundle" name="번들할인금액" data-text="-₩0">-₩0</span>
                 </div>
                 <div class="summary-row discount" id="s-coupon-row" name="쿠폰할인행" style="display:none;">
                     <span id="s-coupon-label" name="쿠폰할인라벨" data-text="쿠폰 할인">쿠폰 할인</span>
-                    <span class="v" id="s-coupon" name="쿠폰할인금액">-₩0</span>
+                    <span class="v" id="s-coupon" name="쿠폰할인금액" data-text="-₩0">-₩0</span>
                 </div>
                 <div class="summary-row" id="summary-row-shipping" name="배송비행">
                     <span id="summary-shipping-label" name="배송비라벨" data-text="배송비">배송비</span>
-                    <span class="v" id="s-shipping" name="배송비금액">₩3,000</span>
+                    <span class="v" id="s-shipping" name="배송비금액" data-text="₩3,000">₩3,000</span>
                 </div>
                 <div class="summary-row total" id="summary-row-total" name="최종결제금액행">
                     <span id="summary-total-label" name="최종결제금액라벨" data-text="최종 결제 금액">최종 결제 금액</span>
-                    <span class="v" id="s-total" name="최종결제금액">₩0</span>
+                    <span class="v" id="s-total" name="최종결제금액" data-text="₩0">₩0</span>
                 </div>
             </div>
 
@@ -784,8 +784,8 @@
     <div class="modal-overlay" id="checkout-modal" name="결제확인모달오버레이">
         <div class="modal" id="checkout-modal-content" name="결제확인모달">
             <div class="modal-header" id="checkout-modal-header" name="결제확인모달헤더">
-                <span class="modal-title" id="checkout-modal-title" name="결제확인모달제목" data-text="결제 확인">💳 결제 확인</span>
-                <button class="modal-close" id="btn-checkout-modal-close" name="결제확인모달닫기버튼" data-text="닫기" onclick="closeModal('checkout-modal')">×</button>
+                <span class="modal-title" id="checkout-modal-title" name="결제확인모달제목" data-text="💳 결제 확인">💳 결제 확인</span>
+                <button class="modal-close" id="btn-checkout-modal-close" name="결제확인모달닫기버튼" data-text="×" onclick="closeModal('checkout-modal')">×</button>
             </div>
             <div id="checkout-summary" name="결제요약내용"></div>
             <button class="btn-checkout" id="btn-complete-order" name="결제완료버튼" data-text="결제 완료" onclick="completeOrder()">결제 완료</button>
@@ -825,7 +825,9 @@
         // 수량 변경
         function changeQty(delta) {
             state.qty = Math.max(1, state.qty + delta);
-            document.getElementById('qty-display').textContent = state.qty;
+            const el = document.getElementById('qty-display');
+            el.textContent = state.qty;
+            el.setAttribute('data-text', state.qty);
         }
 
         // 토스트
@@ -860,7 +862,9 @@
 
         function updateCartBadge() {
             const total = state.cart.reduce((s, x) => s + x.qty, 0);
-            document.getElementById('cart-badge').textContent = total;
+            const el = document.getElementById('cart-badge');
+            el.textContent = total;
+            el.setAttribute('data-text', total);
         }
 
         // 장바구니 열기
@@ -934,27 +938,40 @@
                 ? afterBundle + 0
                 : afterBundle - couponDiscount + state.shipping;
 
-            document.getElementById('s-subtotal').textContent = '₩' + subtotal.toLocaleString();
-            document.getElementById('s-bundle').textContent = '-₩' + bundleDiscount.toLocaleString();
+            const elSubtotal = document.getElementById('s-subtotal');
+            elSubtotal.textContent = '₩' + subtotal.toLocaleString();
+            elSubtotal.setAttribute('data-text', '₩' + subtotal.toLocaleString());
+
+            const elBundle = document.getElementById('s-bundle');
+            elBundle.textContent = '-₩' + bundleDiscount.toLocaleString();
+            elBundle.setAttribute('data-text', '-₩' + bundleDiscount.toLocaleString());
 
             const couponRow = document.getElementById('s-coupon-row');
             if (state.coupon) {
                 couponRow.style.display = 'flex';
-                document.getElementById('s-coupon-label').textContent = couponLabel;
+                const elCouponLabel = document.getElementById('s-coupon-label');
+                elCouponLabel.textContent = couponLabel;
+                elCouponLabel.setAttribute('data-text', couponLabel);
+                const elCoupon = document.getElementById('s-coupon');
                 if (state.coupon === 'FREE-DELIVERY') {
-                    document.getElementById('s-coupon').textContent = '-₩' + state.shipping.toLocaleString();
+                    elCoupon.textContent = '-₩' + state.shipping.toLocaleString();
+                    elCoupon.setAttribute('data-text', '-₩' + state.shipping.toLocaleString());
                 } else {
-                    document.getElementById('s-coupon').textContent = '-₩' + couponDiscount.toLocaleString();
+                    elCoupon.textContent = '-₩' + couponDiscount.toLocaleString();
+                    elCoupon.setAttribute('data-text', '-₩' + couponDiscount.toLocaleString());
                 }
             } else {
                 couponRow.style.display = 'none';
             }
 
-            document.getElementById('s-shipping').textContent = state.coupon === 'FREE-DELIVERY'
-                ? '₩0 (무료)'
-                : '₩' + state.shipping.toLocaleString();
+            const elShipping = document.getElementById('s-shipping');
+            const shippingText = state.coupon === 'FREE-DELIVERY' ? '₩0 (무료)' : '₩' + state.shipping.toLocaleString();
+            elShipping.textContent = shippingText;
+            elShipping.setAttribute('data-text', shippingText);
 
-            document.getElementById('s-total').textContent = '₩' + finalTotal.toLocaleString();
+            const elTotal = document.getElementById('s-total');
+            elTotal.textContent = '₩' + finalTotal.toLocaleString();
+            elTotal.setAttribute('data-text', '₩' + finalTotal.toLocaleString());
         }
 
         function setCoupon(code) {
