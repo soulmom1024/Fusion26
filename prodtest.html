@@ -629,7 +629,7 @@
 
     <!-- 사이트 헤더 -->
     <header class="site-header" id="site-header" name="사이트헤더">
-        <div class="logo" id="site-logo" name="사이트로고">SHOP<span class="accent">FRONT</span></div>
+        <div class="logo" id="site-logo" name="사이트로고" data-text="SHOPFRONT">SHOP<span class="accent" id="logo-accent" name="로고강조텍스트" data-text="FRONT">FRONT</span></div>
         <div class="header-actions" id="header-actions" name="헤더액션영역">
             <span class="header-icon" id="btn-search" name="검색버튼" data-text="검색">🔍</span>
             <span class="header-icon" id="btn-wishlist" name="위시리스트버튼" data-text="위시리스트">♡</span>
@@ -647,12 +647,12 @@
     </div>
 
     <!-- 메인 레이아웃 -->
-    <div class="main-layout" id="main-layout">
+    <div class="main-layout" id="main-layout" name="메인레이아웃">
 
         <!-- 콘텐츠 영역 -->
-        <div class="content-area" id="content-area">
-            <div class="product-container" id="product-container">
-                <div class="product-detail" id="product-detail">
+        <div class="content-area" id="content-area" name="콘텐츠영역">
+            <div class="product-container" id="product-container" name="상품컨테이너">
+                <div class="product-detail" id="product-detail" name="상품상세영역">
 
                     <!-- 갤러리 -->
                     <div class="gallery" id="product-gallery" name="상품갤러리">
@@ -666,7 +666,7 @@
                     </div>
 
                     <!-- 상품 정보 -->
-                    <div class="product-info" id="product-info">
+                    <div class="product-info" id="product-info" name="상품정보영역">
                         <div class="breadcrumb" id="breadcrumb" name="브레드크럼">Apparel › Footwear › Sneakers</div>
                         <span class="promo-badge" id="promo-badge" name="프로모션뱃지" data-text="BUNDLE 15% OFF">🛍 BUNDLE 15% OFF</span>
                         <h1 id="product-title" name="상품명">Sneaker Black 260 + Hoodie Navy M 번들</h1>
@@ -793,7 +793,7 @@
     </div>
 
     <!-- Toast -->
-    <div class="toast" id="toast-notification"></div>
+    <div class="toast" id="toast-notification" name="토스트알림"></div>
 
     <script>
         // 상태
@@ -880,7 +880,7 @@
             const checkoutBtn = document.getElementById('btn-checkout');
 
             if (state.cart.length === 0) {
-                wrap.innerHTML = `<div style="text-align:center; padding:30px; color:#888; font-size:13px;">장바구니가 비어있습니다.</div>`;
+                wrap.innerHTML = `<div id="cart-empty-message" name="장바구니비어있음메시지" data-text="장바구니가 비어있습니다." style="text-align:center; padding:30px; color:#888; font-size:13px;">장바구니가 비어있습니다.</div>`;
                 couponSec.style.display = 'none';
                 summary.style.display = 'none';
                 checkoutBtn.style.display = 'none';
@@ -888,13 +888,13 @@
             }
 
             wrap.innerHTML = state.cart.map((item, i) => `
-                <div class="cart-item">
-                    <div class="cart-item-img">👟</div>
+                <div class="cart-item" id="cart-item-${i}" name="장바구니상품${i + 1}">
+                    <div class="cart-item-img" id="cart-item-img-${i}" name="장바구니상품이미지${i + 1}">👟</div>
                     <div>
-                        <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-option">${item.option} · 수량 ${item.qty}</div>
+                        <div class="cart-item-name" id="cart-item-name-${i}" name="장바구니상품명${i + 1}" data-text="${item.name}">${item.name}</div>
+                        <div class="cart-item-option" id="cart-item-option-${i}" name="장바구니상품옵션${i + 1}" data-text="${item.option}">${item.option} · 수량 ${item.qty}</div>
                     </div>
-                    <div class="cart-item-price">₩${(item.bundle * item.qty).toLocaleString()}</div>
+                    <div class="cart-item-price" id="cart-item-price-${i}" name="장바구니상품가격${i + 1}" data-text="₩${(item.bundle * item.qty).toLocaleString()}">₩${(item.bundle * item.qty).toLocaleString()}</div>
                 </div>
             `).join('');
 
@@ -994,19 +994,19 @@
             const bundle = document.getElementById('s-bundle').textContent;
             const couponRow = document.getElementById('s-coupon-row');
             const couponHtml = couponRow.style.display !== 'none'
-                ? `<div class="summary-row discount"><span>${document.getElementById('s-coupon-label').textContent}</span><span class="v">${document.getElementById('s-coupon').textContent}</span></div>`
+                ? `<div class="summary-row discount" id="checkout-row-coupon" name="결제쿠폰할인행"><span id="checkout-coupon-label" name="결제쿠폰할인라벨" data-text="${document.getElementById('s-coupon-label').textContent}">${document.getElementById('s-coupon-label').textContent}</span><span class="v" id="checkout-coupon-value" name="결제쿠폰할인금액" data-text="${document.getElementById('s-coupon').textContent}">${document.getElementById('s-coupon').textContent}</span></div>`
                 : '';
 
             document.getElementById('checkout-summary').innerHTML = `
-                <div style="font-size:13px; color:#555; margin-bottom:14px;">
+                <div id="checkout-description" name="결제안내문구" data-text="아래 금액으로 결제가 진행됩니다." style="font-size:13px; color:#555; margin-bottom:14px;">
                     아래 금액으로 결제가 진행됩니다.
                 </div>
-                <div class="summary-block" style="margin-top:0;">
-                    <div class="summary-row"><span>상품 합계</span><span class="v">${subtotal}</span></div>
-                    <div class="summary-row discount"><span>번들 할인</span><span class="v">${bundle}</span></div>
+                <div class="summary-block" id="checkout-summary-block" name="결제요약블록" style="margin-top:0;">
+                    <div class="summary-row" id="checkout-row-subtotal" name="결제상품합계행"><span id="checkout-subtotal-label" name="결제상품합계라벨" data-text="상품 합계">상품 합계</span><span class="v" id="checkout-subtotal-value" name="결제상품합계금액" data-text="${subtotal}">${subtotal}</span></div>
+                    <div class="summary-row discount" id="checkout-row-bundle" name="결제번들할인행"><span id="checkout-bundle-label" name="결제번들할인라벨" data-text="번들 할인">번들 할인</span><span class="v" id="checkout-bundle-value" name="결제번들할인금액" data-text="${bundle}">${bundle}</span></div>
                     ${couponHtml}
-                    <div class="summary-row"><span>배송비</span><span class="v">${document.getElementById('s-shipping').textContent}</span></div>
-                    <div class="summary-row total"><span>최종 결제 금액</span><span class="v">${total}</span></div>
+                    <div class="summary-row" id="checkout-row-shipping" name="결제배송비행"><span id="checkout-shipping-label" name="결제배송비라벨" data-text="배송비">배송비</span><span class="v" id="checkout-shipping-value" name="결제배송비금액" data-text="${document.getElementById('s-shipping').textContent}">${document.getElementById('s-shipping').textContent}</span></div>
+                    <div class="summary-row total" id="checkout-row-total" name="결제최종금액행"><span id="checkout-total-label" name="결제최종금액라벨" data-text="최종 결제 금액">최종 결제 금액</span><span class="v" id="checkout-total-value" name="결제최종결제금액" data-text="${total}">${total}</span></div>
                 </div>
             `;
             closeModal('cart-modal');
