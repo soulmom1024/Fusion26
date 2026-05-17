@@ -426,10 +426,14 @@
     <header class="site-header" id="site-header" name="사이트헤더">
         <div class="logo" id="site-logo" name="사이트로고" data-text="SHOPFRONT">SHOP<span class="accent" id="logo-accent" name="로고강조텍스트" data-text="FRONT">FRONT</span></div>
         <div class="header-actions" id="header-actions" name="헤더액션영역">
-            <span class="header-icon" id="btn-search" name="검색버튼" data-text="🔍">🔍</span>
-            <span class="header-icon" id="btn-wishlist" name="위시리스트버튼" data-text="♡">♡</span>
-            <span class="header-icon" id="btn-cart-icon" name="장바구니아이콘" data-text="🛒" onclick="openCart()">
-                🛒
+            <span class="header-icon" id="btn-search" name="검색버튼" data-text="검색">
+                <img id="icon-search" name="검색아이콘이미지" data-text="🔍" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E" alt="검색" style="width:20px; height:20px; vertical-align:middle;">
+            </span>
+            <span class="header-icon" id="btn-wishlist" name="위시리스트버튼" data-text="위시리스트">
+                <img id="icon-wishlist" name="위시리스트아이콘이미지" data-text="♡" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'/%3E%3C/svg%3E" alt="위시리스트" style="width:20px; height:20px; vertical-align:middle;">
+            </span>
+            <span class="header-icon" id="btn-cart-icon" name="장바구니아이콘" data-text="장바구니" onclick="openCart()">
+                <img id="icon-cart" name="장바구니아이콘이미지" data-text="🛒" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='21' r='1'/%3E%3Ccircle cx='20' cy='21' r='1'/%3E%3Cpath d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'/%3E%3C/svg%3E" alt="장바구니" style="width:20px; height:20px; vertical-align:middle;">
                 <span class="cart-badge" id="cart-badge" name="장바구니수량뱃지" data-text="0">0</span>
             </span>
         </div>
