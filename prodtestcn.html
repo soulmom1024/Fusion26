@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAGING - Product Page Test</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f5f5f5;
+            color: #212121;
+            min-height: 100vh;
+        }
+
+        /* 暂存横幅 */
+        .staging-banner {
+            background: repeating-linear-gradient(
+                45deg,
+                #ff5252,
+                #ff5252 12px,
+                #d32f2f 12px,
+                #d32f2f 24px
+            );
+            color: #fff;
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+        }
+
+        .staging-banner .left,
+        .staging-banner .right {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        /* 页头 */
+        .site-header {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #212121;
+            letter-spacing: -0.5px;
+        }
+
+        .logo .accent {
+            color: #ff5722;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .header-icon {
+            font-size: 20px;
+            color: #555;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background: #ff5722;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 设备切换 */
+        .device-toggle {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 10px 24px;
+            display: flex;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .device-btn {
+            background: #fff;
+            border: 1px solid #bdbdbd;
+            color: #555;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 22px;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .device-btn:first-child {
+            border-radius: 6px 0 0 6px;
+        }
+
+        .device-btn:last-child {
+            border-radius: 0 6px 6px 0;
+            border-left: none;
+        }
+
+        .device-btn.active {
+            background: #212121;
+            color: #fff;
+            border-color: #212121;
+        }
+
+        /* 主布局 */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+            min-height: calc(100vh - 100px);
+        }
+
+        .content-area {
+            padding: 24px;
+            background: #f5f5f5;
+            overflow-y: auto;
+            transition: max-width 0.3s ease;
+            display: flex;
+            justify-content: center;
+        }
+
+        .content-area.mobile-view .product-container {
+            max-width: 380px;
+        }
+
+        .content-area.mobile-view .product-detail {
+            grid-template-columns: 1fr;
+        }
+
+        .content-area.mobile-view .gallery-img {
+            height: 280px;
+        }
+
+        .product-container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 800px;
+            transition: max-width 0.3s ease;
+        }
+
+        /* 商品详情 */
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+        }
+
+        .gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 320px;
+            background: linear-gradient(135deg, #eceff1, #cfd8dc);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            color: #607d8b;
+        }
+
+        .gallery-thumbs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .gallery-thumb {
+            aspect-ratio: 1;
+            background: #eceff1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #90a4ae;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .gallery-thumb.active {
+            border-color: #ff5722;
+        }
+
+        .product-info .breadcrumb {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .product-info .promo-badge {
+            display: inline-block;
+            background: #ff5722;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .product-info h1 {
+            margin: 0 0 8px 0;
+            font-size: 22px;
+            font-weight: 700;
+            color: #212121;
+            line-height: 1.3;
+        }
+
+        .product-meta {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 16px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .price-block {
+            background: #fafafa;
+            border-radius: 8px;
+            padding: 16px 18px;
+            margin-bottom: 18px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .price-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .price-old {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .price-current {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ff5722;
+            font-family: 'Courier New', monospace;
+        }
+
+        .price-discount {
+            color: #ff5722;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .options-block {
+            margin-bottom: 18px;
+        }
+
+        .options-label {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .options-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            background: #fff;
+            border: 1px solid #bdbdbd;
+            border-radius: 4px;
+            padding: 8px 14px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .option-btn.active {
+            background: #212121;
+            color: #fff;
+            border-color: #212121;
+        }
+
+        .qty-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border: 1px solid #bdbdbd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .qty-display {
+            font-size: 14px;
+            font-weight: 700;
+            min-width: 32px;
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-cart {
+            flex: 1;
+            background: #fff;
+            color: #212121;
+            border: 1.5px solid #212121;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-buy {
+            flex: 1;
+            background: #ff5722;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-cart:hover { background: #f5f5f5; }
+        .btn-buy:hover { background: #f4511e; }
+
+
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #212121;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 200;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-8px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 暂存环境横幅 -->
+    <div class="staging-banner" id="staging-banner" name="暂存横幅">
+        <span class="left" id="staging-label-left" name="暂存环境标签" data-text="⚠ STAGING ENVIRONMENT">⚠ STAGING ENVIRONMENT</span>
+        <span id="staging-build-info" name="构建信息" data-text="build #2026.05.19-rc.7 · branch: feature/promo-bundle-15">build #2026.05.19-rc.7 · branch: feature/promo-bundle-15</span>
+        <span class="right" id="staging-label-right" name="QA测试模式标签" data-text="QA TEST MODE">QA TEST MODE</span>
+    </div>
+
+    <!-- 网站页头 -->
+    <header class="site-header" id="site-header" name="网站页头">
+        <div class="logo" id="site-logo" name="网站Logo" data-text="SHOPFRONT">SHOP<span class="accent" id="logo-accent" name="Logo强调文字" data-text="FRONT">FRONT</span></div>
+        <div class="header-actions" id="header-actions" name="页头操作区域">
+            <span class="header-icon" id="btn-search" name="搜索按钮" data-text="搜索">
+                <img id="icon-search" name="搜索图标图片" data-text="🔍" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E" alt="搜索" style="width:20px; height:20px; vertical-align:middle;">
+            </span>
+            <span class="header-icon" id="btn-wishlist" name="收藏夹按钮" data-text="收藏夹">
+                <img id="icon-wishlist" name="收藏夹图标图片" data-text="♡" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'/%3E%3C/svg%3E" alt="收藏夹" style="width:20px; height:20px; vertical-align:middle;">
+            </span>
+            <span class="header-icon" id="btn-cart-icon" name="购物车图标" data-text="购物车" onclick="openCart()">
+                <img id="icon-cart" name="购物车图标图片" data-text="🛒" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='21' r='1'/%3E%3Ccircle cx='20' cy='21' r='1'/%3E%3Cpath d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6'/%3E%3C/svg%3E" alt="购物车" style="width:20px; height:20px; vertical-align:middle;">
+                <span class="cart-badge" id="cart-badge" name="购物车数量徽章" data-text="0">0</span>
+            </span>
+        </div>
+    </header>
+
+    <!-- 设备切换 -->
+    <div class="device-toggle" id="device-toggle" name="设备切换区域">
+        <button class="device-btn active" id="btn-web" name="网页视图切换按钮" data-text="💻 Web" onclick="setDevice('web')">💻 Web</button>
+        <button class="device-btn" id="btn-mobile" name="移动视图切换按钮" data-text="📱 Mobile" onclick="setDevice('mobile')">📱 Mobile</button>
+    </div>
+
+    <!-- 主布局 -->
+    <div class="main-layout" id="main-layout" name="主布局">
+
+        <!-- 内容区域 -->
+        <div class="content-area" id="content-area" name="内容区域">
+            <div class="product-container" id="product-container" name="商品容器">
+                <div class="product-detail" id="product-detail" name="商品详情区域">
+
+                    <!-- 图库 -->
+                    <div class="gallery" id="product-gallery" name="商品图库">
+                        <div class="gallery-img" id="gallery-main-image" name="图库主图" data-text="👟">👟</div>
+                        <div class="gallery-thumbs" id="gallery-thumbs" name="图库缩略图列表">
+                            <div class="gallery-thumb active" id="thumb-1" name="缩略图1" data-text="👟">👟</div>
+                            <div class="gallery-thumb" id="thumb-2" name="缩略图2" data-text="📷">📷</div>
+                            <div class="gallery-thumb" id="thumb-3" name="缩略图3" data-text="📷">📷</div>
+                            <div class="gallery-thumb" id="thumb-4" name="缩略图4" data-text="📷">📷</div>
+                        </div>
+                    </div>
+
+                    <!-- 商品信息 -->
+                    <div class="product-info" id="product-info" name="商品信息区域">
+                        <div class="breadcrumb" id="breadcrumb" name="面包屑导航" data-text="服装 › 鞋类 › 运动鞋">服装 › 鞋类 › 运动鞋</div>
+                        <span class="promo-badge" id="promo-badge" name="促销徽章" data-text="🛍 套装优惠15%">🛍 套装优惠15%</span>
+                        <h1 id="product-title" name="商品名称" data-text="Sneaker Black 270 + Hoodie Navy L 套装">Sneaker Black 270 + Hoodie Navy L 套装</h1>
+                        <div class="product-meta" id="product-meta" name="商品元信息" data-text="SKU: SNK-2401-BLK + HD-3308-NVY · ID: 4421">SKU: SNK-2401-BLK + HD-3308-NVY · ID: 4421</div>
+
+                        <div class="price-block" id="price-block" name="价格信息区域">
+                            <div class="price-row" id="price-row-regular" name="原价行">
+                                <span id="price-regular-label" name="原价标签" data-text="原价">原价</span>
+                                <span class="price-old" id="p-regular" name="原价金额" data-text="¥1,440">¥1,440</span>
+                            </div>
+                            <div class="price-row" id="price-row-discount" name="折扣行">
+                                <span id="price-discount-label" name="折扣标签" data-text="折扣 (-15%)">折扣 (-15%)</span>
+                                <span class="price-discount" id="p-discount" name="折扣金额" data-text="-¥216">-¥216</span>
+                            </div>
+                            <div class="price-row" id="price-row-bundle" name="套装价格行" style="margin-top: 8px;">
+                                <span id="price-bundle-label" name="套装价格标签" data-text="套装价格" style="font-weight: 700; color: #212121;">套装价格</span>
+                                <span class="price-current" id="p-current" name="套装价格金额" data-text="¥1,224">¥1,224</span>
+                            </div>
+                        </div>
+
+                        <div class="options-block" id="options-sneaker-size" name="运动鞋尺码选项">
+                            <div class="options-label" id="options-sneaker-size-label" name="运动鞋尺码标签" data-text="尺码 (Sneaker)">尺码 (Sneaker)</div>
+                            <div class="options-row" id="options-sneaker-size-row" name="运动鞋尺码按钮组">
+                                <button class="option-btn" id="btn-sneaker-size-250" name="运动鞋尺码250" data-text="250" onclick="selectOption(this)">250</button>
+                                <button class="option-btn" id="btn-sneaker-size-260" name="运动鞋尺码260" data-text="260" onclick="selectOption(this)">260</button>
+                                <button class="option-btn active" id="btn-sneaker-size-270" name="运动鞋尺码270" data-text="270" onclick="selectOption(this)">270</button>
+                                <button class="option-btn" id="btn-sneaker-size-280" name="运动鞋尺码280" data-text="280" onclick="selectOption(this)">280</button>
+                            </div>
+                        </div>
+
+                        <div class="options-block" id="options-hoodie-size" name="卫衣尺码选项">
+                            <div class="options-label" id="options-hoodie-size-label" name="卫衣尺码标签" data-text="尺码 (Hoodie)">尺码 (Hoodie)</div>
+                            <div class="options-row" id="options-hoodie-size-row" name="卫衣尺码按钮组">
+                                <button class="option-btn" id="btn-hoodie-size-s" name="卫衣尺码S" data-text="S" onclick="selectOption(this)">S</button>
+                                <button class="option-btn" id="btn-hoodie-size-m" name="卫衣尺码M" data-text="M" onclick="selectOption(this)">M</button>
+                                <button class="option-btn active" id="btn-hoodie-size-l" name="卫衣尺码L" data-text="L" onclick="selectOption(this)">L</button>
+                                <button class="option-btn" id="btn-hoodie-size-xl" name="卫衣尺码XL" data-text="XL" onclick="selectOption(this)">XL</button>
+                            </div>
+                        </div>
+
+                        <div class="qty-row" id="qty-row" name="数量选择区域">
+                            <span id="qty-label" name="数量标签" data-text="数量" style="font-size:13px; color:#555; margin-right:6px;">数量</span>
+                            <button class="qty-btn" id="btn-qty-decrease" name="数量减少按钮" data-text="−" onclick="changeQty(-1)">−</button>
+                            <span class="qty-display" id="qty-display" name="数量显示" data-text="1">1</span>
+                            <button class="qty-btn" id="btn-qty-increase" name="数量增加按钮" data-text="+" onclick="changeQty(1)">+</button>
+                        </div>
+
+                        <div class="action-buttons" id="action-buttons" name="购买操作区域">
+                            <button class="btn-cart" id="btn-add-to-cart" name="加入购物车按钮" data-text="加入购物车" onclick="addToCart()">加入购物车</button>
+                            <button class="btn-buy" id="btn-buy-now" name="立即购买按钮" data-text="立即购买" onclick="buyNow()">立即购买</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <!-- 提示通知 -->
+    <div class="toast" id="toast-notification" name="提示通知"></div>
+
+    <script>
+        // 状态
+        const state = {
+            qty: 1,
+            cart: JSON.parse(localStorage.getItem('prodtest_cart') || '[]'),
+            coupon: null,
+            shipping: 20
+        };
+
+        const REGULAR = 1440;
+        const BUNDLE = 1224;
+        const BUNDLE_DISCOUNT_PCT = 15;
+
+        function selectOption(btn) {
+            const row = btn.closest('.options-row');
+            row.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        // 设备切换
+        function setDevice(d) {
+            const area = document.getElementById('content-area');
+            document.getElementById('btn-web').classList.toggle('active', d === 'web');
+            document.getElementById('btn-mobile').classList.toggle('active', d === 'mobile');
+            area.classList.toggle('mobile-view', d === 'mobile');
+        }
+
+        // 数量变更
+        function changeQty(delta) {
+            state.qty = Math.max(1, state.qty + delta);
+            const el = document.getElementById('qty-display');
+            el.textContent = state.qty;
+            el.setAttribute('data-text', state.qty);
+        }
+
+        // 提示
+        function toast(msg) {
+            const t = document.getElementById('toast-notification');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2200);
+        }
+
+        // 加入购物车
+        function addToCart() {
+            const sneaker = document.querySelectorAll('.options-block')[0].querySelector('.option-btn.active').textContent;
+            const hoodie = document.querySelectorAll('.options-block')[1].querySelector('.option-btn.active').textContent;
+            const item = {
+                name: 'Sneaker Black + Hoodie Navy 套装',
+                sku: 'SNK-2401-BLK + HD-3308-NVY',
+                regular: REGULAR,
+                bundle: BUNDLE,
+                qty: state.qty,
+                option: `Sneaker ${sneaker} / Hoodie ${hoodie}`
+            };
+            state.cart.push(item);
+            localStorage.setItem('prodtest_cart', JSON.stringify(state.cart));
+            updateCartBadge();
+            toast(`已将${state.qty}件商品加入购物车`);
+        }
+
+        function buyNow() {
+            addToCart();
+            openCart();
+        }
+
+        function updateCartBadge() {
+            const total = state.cart.reduce((s, x) => s + x.qty, 0);
+            const el = document.getElementById('cart-badge');
+            el.textContent = total;
+            el.setAttribute('data-text', total);
+        }
+
+        // 跳转到购物车页面
+        function openCart() {
+            location.href = 'cart.html';
+        }
+
+        // 页面加载时更新购物车徽章
+        updateCartBadge();
+
+    </script>
+
+</body>
+</html>
