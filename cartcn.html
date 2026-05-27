@@ -483,19 +483,14 @@
             elBundle.setAttribute('data-text', '-¥' + bundleDiscount.toLocaleString());
 
             const couponRow = document.getElementById('cart-s-coupon-row');
-            if (couponState) {
+            if (couponState && couponState !== 'FREE-DELIVERY') {
                 couponRow.style.display = 'flex';
                 const elCouponLabel = document.getElementById('cart-s-coupon-label');
                 elCouponLabel.textContent = couponLabel;
                 elCouponLabel.setAttribute('data-text', couponLabel);
                 const elCoupon = document.getElementById('cart-s-coupon');
-                if (couponState === 'FREE-DELIVERY') {
-                    elCoupon.textContent = '-¥' + SHIPPING.toLocaleString();
-                    elCoupon.setAttribute('data-text', '-¥' + SHIPPING.toLocaleString());
-                } else {
-                    elCoupon.textContent = '-¥' + couponDiscount.toLocaleString();
-                    elCoupon.setAttribute('data-text', '-¥' + couponDiscount.toLocaleString());
-                }
+                elCoupon.textContent = '-¥' + couponDiscount.toLocaleString();
+                elCoupon.setAttribute('data-text', '-¥' + couponDiscount.toLocaleString());
             } else {
                 couponRow.style.display = 'none';
             }
