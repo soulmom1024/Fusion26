@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전자결재 - 기안 작성</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root {
+    --navy: #16324f;
+    --navy-dark: #0f2438;
+    --blue: #2563a8;
+    --blue-bg: #eaf1f9;
+    --blue-border: #b9d1ea;
+    --green: #1f7a4d;
+    --green-bg: #e7f4ec;
+    --red: #c0392b;
+    --red-bg: #fbeceb;
+    --ink: #1c2733;
+    --ink-sub: #5c6b7a;
+    --ink-mute: #8a97a4;
+    --line: #e2e7ec;
+    --line-soft: #eef1f4;
+    --surface: #ffffff;
+    --page: #f4f6f8;
+    --radius: 8px;
+    --font: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--page);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    padding: 24px 16px;
+  }
+  .doc {
+    max-width: 860px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* header */
+  .doc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--navy);
+    color: #fff;
+  }
+  .doc-head .title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; }
+  .doc-head .title span { font-weight: 400; font-size: 13px; color: #b7c6d6; }
+  .doc-head .who { font-size: 13px; color: #cdd8e3; }
+
+  .doc-body { padding: 24px; }
+
+  .field { margin-bottom: 26px; }
+  .field:last-child { margin-bottom: 0; }
+  .label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600; color: var(--ink);
+    margin-bottom: 9px;
+  }
+  .label .req { color: var(--red); font-weight: 700; }
+
+  input[type="text"], textarea {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 11px 14px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-bg);
+  }
+  textarea { min-height: 140px; resize: vertical; }
+  input::placeholder, textarea::placeholder { color: var(--ink-mute); }
+
+  /* approval line picker */
+  .line-grid {
+    display: grid;
+    grid-template-columns: 1fr 34px 1.25fr;
+    gap: 14px;
+    align-items: stretch;
+  }
+  .panel {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 216px;
+  }
+  .panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 14px;
+    background: #f7f9fb;
+    border-bottom: 1px solid var(--line);
+    font-size: 12px; color: var(--ink-sub); font-weight: 600;
+  }
+  .panel-head .cnt { color: var(--blue); font-weight: 600; }
+  .panel-scroll { overflow-y: auto; flex: 1; }
+
+  .emp {
+    display: flex; align-items: center; gap: 11px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line-soft);
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .emp:last-child { border-bottom: none; }
+  .emp:hover { background: #f7f9fb; }
+  .emp.added { opacity: .38; cursor: default; }
+  .emp.added:hover { background: transparent; }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--blue-bg); color: var(--blue);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
+  }
+  .emp-info { min-width: 0; flex: 1; }
+  .emp-name { font-size: 13px; font-weight: 600; }
+  .emp-name em { font-style: normal; font-weight: 400; color: var(--ink-sub); }
+  .emp-dept { font-size: 11px; color: var(--ink-mute); }
+  .emp .add-ic { margin-left: auto; color: var(--blue); font-size: 18px; line-height: 1; }
+
+  .line-list { padding: 8px; }
+  .line-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 11px;
+    border-radius: var(--radius);
+    margin-bottom: 6px;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .line-row:last-child { margin-bottom: 0; }
+  .line-row.drafter { background: var(--green-bg); border-color: #c6e3d1; }
+  .role-tag {
+    width: 40px; flex-shrink: 0; text-align: center;
+    font-size: 11px; font-weight: 700;
+    color: var(--ink-mute);
+  }
+  .line-row.drafter .role-tag { color: var(--green); }
+  .line-name { flex: 1; font-size: 13px; font-weight: 600; }
+  .line-name em { font-style: normal; font-weight: 400; color: var(--ink-sub); }
+  .line-row.drafter .line-name { color: var(--green); }
+  .del-btn {
+    border: none; background: none; cursor: pointer;
+    color: var(--ink-mute); font-size: 16px; line-height: 1;
+    padding: 2px 4px; border-radius: 4px;
+  }
+  .del-btn:hover { color: var(--red); background: var(--red-bg); }
+  .line-hint {
+    text-align: center; font-size: 12px; color: var(--ink-mute);
+    padding: 22px 8px;
+  }
+  .arrow { display: flex; align-items: center; justify-content: center; color: var(--ink-mute); font-size: 20px; }
+
+  /* file attach */
+  .drop {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px;
+    border: 1.5px dashed var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    cursor: pointer;
+    color: var(--ink-sub);
+    font-size: 13px;
+    background: #fafbfc;
+    transition: border-color .15s, background .15s;
+  }
+  .drop:hover, .drop.over { border-color: var(--blue); background: var(--blue-bg); color: var(--blue); }
+  .drop .ic { font-size: 26px; line-height: 1; }
+  .drop small { color: var(--ink-mute); font-size: 11px; }
+  .file-list { margin-top: 10px; }
+  .file-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .file-row .fic { color: var(--ink-sub); font-size: 16px; }
+  .file-row .fname { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .file-row .fsize { font-size: 11px; color: var(--ink-mute); flex-shrink: 0; }
+
+  /* footer */
+  .doc-foot {
+    display: flex; gap: 8px; justify-content: flex-end;
+    padding: 18px 24px;
+    border-top: 1px solid var(--line);
+    background: #fafbfc;
+  }
+  .btn {
+    font-family: var(--font);
+    font-size: 14px; font-weight: 600;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: #fff;
+    color: var(--ink-sub);
+    transition: background .12s, border-color .12s;
+  }
+  .btn:hover { background: #f2f4f6; }
+  .btn-primary { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .btn-primary:hover { background: var(--navy-dark); }
+
+  @media (max-width: 620px) {
+    .line-grid { grid-template-columns: 1fr; }
+    .arrow { transform: rotate(90deg); padding: 2px 0; }
+    .panel { min-height: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="doc">
+  <div class="doc-head">
+    <div class="title">기안 작성 <span>전자결재</span></div>
+    <div class="who">기안자 · 김지연 대리</div>
+  </div>
+
+  <div class="doc-body">
+
+    <!-- 제목 -->
+    <div class="field">
+      <div class="label">문서 제목 <span class="req">*</span></div>
+      <input type="text" id="doc-title" placeholder="제목을 입력하세요">
+    </div>
+
+    <!-- 결재선 -->
+    <div class="field">
+      <div class="label">결재선 지정 <span class="req">*</span></div>
+      <div class="line-grid">
+        <div class="panel">
+          <div class="panel-head"><span>직원 목록</span></div>
+          <div class="panel-scroll" id="emp-list"></div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="panel">
+          <div class="panel-head"><span>결재선</span><span class="cnt" id="line-count">1명</span></div>
+          <div class="line-list" id="approval-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 내용 -->
+    <div class="field">
+      <div class="label">결재 내용</div>
+      <textarea id="doc-content" placeholder="결재 내용을 입력하세요"></textarea>
+    </div>
+
+    <!-- 첨부 -->
+    <div class="field">
+      <div class="label">파일 첨부</div>
+      <label class="drop" id="drop">
+        <span class="ic">📎</span>
+        <span>파일을 선택하거나 이 영역에 끌어놓으세요</span>
+        <small>여러 파일 첨부 가능</small>
+        <input type="file" id="file-in" multiple hidden>
+      </label>
+      <div class="file-list" id="file-list"></div>
+    </div>
+
+  </div>
+
+  <div class="doc-foot">
+    <button class="btn" id="btn-save">임시저장</button>
+    <button class="btn btn-primary" id="btn-submit">결재 상신</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  // 직원 마스터 데이터
+  var employees = [
+    { id: 1, name: "홍길동", rank: "팀장",      dept: "여신영업1팀" },
+    { id: 2, name: "강남순", rank: "부장",      dept: "여신심사부" },
+    { id: 3, name: "김경남", rank: "본부장",    dept: "여신본부" },
+    { id: 4, name: "이수형", rank: "준법감시인", dept: "준법지원실" },
+    { id: 5, name: "박서연", rank: "과장",      dept: "여신영업1팀" }
+  ];
+  var roleLabels = ["검토", "합의", "결재", "전결", "협조"];
+  var drafter = { name: "김지연", rank: "대리" };
+
+  var line = []; // 선택된 결재자 id 배열 (순서 = 결재 순서)
+
+  var empListEl = document.getElementById("emp-list");
+  var lineEl    = document.getElementById("approval-line");
+  var countEl   = document.getElementById("line-count");
+  var fileInput = document.getElementById("file-in");
+  var fileListEl= document.getElementById("file-list");
+  var dropEl    = document.getElementById("drop");
+  var files     = [];
+
+  function shortName(n) { return n.length > 2 ? n.slice(1) : n; }
+  function byId(id) { return employees.filter(function (e) { return e.id === id; })[0]; }
+
+  function renderEmployees() {
+    empListEl.innerHTML = "";
+    employees.forEach(function (e) {
+      var added = line.indexOf(e.id) > -1;
+      var row = document.createElement("div");
+      row.className = "emp" + (added ? " added" : "");
+      row.innerHTML =
+        '<div class="avatar">' + shortName(e.name) + '</div>' +
+        '<div class="emp-info">' +
+          '<div class="emp-name">' + e.name + ' <em>' + e.rank + '</em></div>' +
+          '<div class="emp-dept">' + e.dept + '</div>' +
+        '</div>' +
+        (added ? '' : '<span class="add-ic">+</span>');
+      if (!added) {
+        row.addEventListener("click", function () { line.push(e.id); render(); });
+      }
+      empListEl.appendChild(row);
+    });
+  }
+
+  function renderLine() {
+    countEl.textContent = (line.length + 1) + "명";
+    lineEl.innerHTML = "";
+
+    // 기안자 (고정)
+    var d = document.createElement("div");
+    d.className = "line-row drafter";
+    d.innerHTML =
+      '<span class="role-tag">기안</span>' +
+      '<span class="line-name">' + drafter.name + ' <em>' + drafter.rank + '</em></span>';
+    lineEl.appendChild(d);
+
+    line.forEach(function (id, i) {
+      var e = byId(id);
+      var role = roleLabels[Math.min(i, roleLabels.length - 1)];
+      var row = document.createElement("div");
+      row.className = "line-row";
+      row.innerHTML =
+        '<span class="role-tag">' + role + '</span>' +
+        '<span class="line-name">' + e.name + ' <em>' + e.rank + '</em></span>' +
+        '<button class="del-btn" aria-label="결재자 삭제" title="삭제">×</button>';
+      row.querySelector(".del-btn").addEventListener("click", function () {
+        line.splice(line.indexOf(id), 1);
+        render();
+      });
+      lineEl.appendChild(row);
+    });
+
+    if (line.length === 0) {
+      var hint = document.createElement("div");
+      hint.className = "line-hint";
+      hint.textContent = "왼쪽 목록에서 결재자를 선택하세요";
+      lineEl.appendChild(hint);
+    }
+  }
+
+  function render() { renderEmployees(); renderLine(); }
+
+  // 파일 첨부
+  function addFiles(fileList) {
+    Array.prototype.forEach.call(fileList, function (f) { files.push(f); });
+    renderFiles();
+  }
+  function renderFiles() {
+    fileListEl.innerHTML = "";
+    files.forEach(function (f, idx) {
+      var kb = Math.round(f.size / 1024);
+      var row = document.createElement("div");
+      row.className = "file-row";
+      row.innerHTML =
+        '<span class="fic">📄</span>' +
+        '<span class="fname">' + f.name + '</span>' +
+        '<span class="fsize">' + (kb > 0 ? kb.toLocaleString() + " KB" : "") + '</span>' +
+        '<button class="del-btn" aria-label="첨부 삭제" title="삭제">×</button>';
+      row.querySelector(".del-btn").addEventListener("click", function () {
+        files.splice(idx, 1);
+        renderFiles();
+      });
+      fileListEl.appendChild(row);
+    });
+  }
+
+  fileInput.addEventListener("change", function () { addFiles(fileInput.files); fileInput.value = ""; });
+  ["dragover", "dragenter"].forEach(function (ev) {
+    dropEl.addEventListener(ev, function (e) { e.preventDefault(); dropEl.classList.add("over"); });
+  });
+  ["dragleave", "drop"].forEach(function (ev) {
+    dropEl.addEventListener(ev, function (e) { e.preventDefault(); dropEl.classList.remove("over"); });
+  });
+  dropEl.addEventListener("drop", function (e) {
+    if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files);
+  });
+
+  // 액션
+  function collect() {
+    return {
+      title: document.getElementById("doc-title").value.trim(),
+      content: document.getElementById("doc-content").value.trim(),
+      approvalLine: line.map(function (id, i) {
+        var e = byId(id);
+        return { order: i + 1, role: roleLabels[Math.min(i, roleLabels.length - 1)], name: e.name, rank: e.rank, dept: e.dept };
+      }),
+      files: files.map(function (f) { return f.name; })
+    };
+  }
+  document.getElementById("btn-save").addEventListener("click", function () {
+    console.log("[임시저장]", collect());
+    alert("임시저장되었습니다.");
+  });
+  document.getElementById("btn-submit").addEventListener("click", function () {
+    var data = collect();
+    if (!data.title) { alert("문서 제목을 입력하세요."); return; }
+    if (data.approvalLine.length === 0) { alert("결재선을 지정하세요."); return; }
+    console.log("[결재 상신]", data);
+    alert("결재가 상신되었습니다.");
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
