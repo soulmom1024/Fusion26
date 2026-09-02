@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 58" role="img" aria-labelledby="title desc">
+  <title id="title">UiP</title>
+  <desc id="desc">UiP logo with a sparkle accent</desc>
+  <g fill="#102a43" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-size="58" font-weight="700" letter-spacing="-5">
+    <text x="3" y="48">UiP</text>
+  </g>
+  <path fill="#fa5d3d" d="M40 3l3.5 9.5L53 16l-9.5 3.5L40 29l-3.5-9.5L27 16l9.5-3.5L40 3z"/>
+  <path fill="#7b61ff" d="M61 5l2 5.5L68.5 13 63 15l-2 5.5-2-5.5-5.5-2 5.5-2L61 5z"/>
+</svg>
